@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:daram/controller/user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,7 +69,7 @@ Future<Map<String,String?>> getLoginInfo() async {
 
 Future<UserForm?> loginSignUp({required String data})async{
 try{
-  var url = Uri.parse('$DANRAM_URL/login/sign-up');
+  var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/login/sign-up');
   debugPrint('API 주소 = $url');
   debugPrint('보내는 데이터 = ${data.runtimeType}');
   final postResponse = await http.post(url, headers: {

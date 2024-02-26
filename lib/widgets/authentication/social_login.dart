@@ -40,7 +40,6 @@ Future<bool?> socialLogin({required Login loginType, required BuildContext conte
         if (result.status == NaverLoginStatus.loggedIn) {
           print('accessToken = ${result.accessToken}');
           print('id = ${result.account.id}');
-
           final data ={
             "email": result.account.email,
             "nickname": result.account.nickname,

@@ -7,6 +7,7 @@ import 'package:daram/controller/party.dart';
 import 'package:daram/controller/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,7 @@ Future<dynamic> addParty({required String? imageFilePath,required Map<String,dyn
 
   try{
     final dataEncode = jsonEncode(data);
-    var url = Uri.parse('$DANRAM_URL/party/add/without-img');
+    var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party/add/without-img');
     debugPrint('API 주소 = $url');
     debugPrint('보내는 데이터 = ${dataEncode.runtimeType}');
     final postResponse = await http.post(url, headers: {
@@ -85,7 +86,7 @@ Future<dynamic> getMyParty()async{
   print('getMyParty 시작');
   List<dynamic> myPartyRawData = [];
   try{
-    var url = Uri.parse('$DANRAM_URL/party/my?pages=$PAGES');
+    var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party/my?pages=$PAGES');
     debugPrint('API 주소 = $url');
     final getResponse = await http.get(url, headers: {
       'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ Future<dynamic> getParty()async{
   List<dynamic> allPartyRawData = [];
     try{
       print('토큰 값 = ${userController.accessToken.value}');
-      var url = Uri.parse('$DANRAM_URL/party?sortType=$SORT_TYPE&pages=$PAGES');
+      var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party?sortType=$SORT_TYPE&pages=$PAGES');
       debugPrint('API 주소 = $url');
       final getResponse = await http.get(url, headers: {
         'Content-Type': 'application/json',
