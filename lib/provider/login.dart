@@ -34,7 +34,7 @@ Future<void> setLoginMethod({required String memUserId}) async {
   final prefs = await SharedPreferences.getInstance();
 }
 /// 자동 로그인 on / off 설정
-Future<void> setAutoLogin({required bool autoLogin,required String memUserId, bool? isLogin}) async {
+Future<void> setAutoLogin() async {
   final UserController userController = Get.find<UserController>();
   final prefs = await SharedPreferences.getInstance();
   await Future.value([
@@ -48,23 +48,25 @@ Future<void> setAutoLogin({required bool autoLogin,required String memUserId, bo
     prefs.setBool('ban',userController.ban.value),
   ]);
 }
-Future<Map<String,String?>> getLoginInfo() async {
+Future<bool> getAutoLogin() async {
   final UserController userController = Get.find<UserController>();
-  Map<String,String?> result = {};
   final prefs = await SharedPreferences.getInstance();
-  if(prefs.getString('memberId') != ''){
+  String? userId = prefs.getString('memberId');
+
+  if(userId != '' && userId != null){
     userController.memberId.value = int.parse(prefs.getString('memberId') ?? '0');
   userController.accessToken.value = prefs.getString('accessToken') ?? '';
   userController.refreshToken.value =  prefs.getString('refreshToken') ?? '';
   userController.nickname.value = prefs.getString('nickname') ?? '';
   userController.email.value = prefs.getString('email') ?? '';
   userController.img.value =  prefs.getString('img') ?? '';
-  String? pro = prefs.getString('pro');
-  if(pro == 'true'){
+  userController.pro.value = prefs.getBool('pro') ?? false;
+  userController.ban.value = prefs.getBool('ban') ?? false;
+  return true;
+  }else{
+    return false;
+  }
 
-  }
-  }
-  return result;
 }
 
 Future<UserForm?> loginSignUp({required String data})async{

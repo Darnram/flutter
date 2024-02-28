@@ -1,4 +1,5 @@
 import 'package:daram/controller/party.dart';
+import 'package:daram/provider/login.dart';
 import 'package:daram/widgets/authentication/social_login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,10 +25,10 @@ class LoginButton extends StatelessWidget {
         print('네이버 로그인 버튼 클릭');
         await socialLogin(context: context, loginType: login).then((value)async{
           print('value = $value');
+          setAutoLogin();
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
         });
       },
-
       child: Container(
         child: Image.asset(loginBtnImg,height: Sizes.size64 ,width: Sizes.size64),
       ),
