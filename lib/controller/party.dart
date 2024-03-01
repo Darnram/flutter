@@ -26,11 +26,9 @@ class PartyController extends GetxController{
     print('image = $image');
   }
   void fetchParty({required Party party}){
-    allParty.clear();
     allParty.add(party);
   }
   void fetchMyParty({required Party party}){
-    myParty.clear();
     myParty.add(party);
   }
 

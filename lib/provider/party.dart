@@ -11,12 +11,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 
 import '../constants/Images.dart';
 import '../main.dart';
 import '../models/party.dart';
-
 
 
 
@@ -37,7 +37,37 @@ const List<String> categories = [
 Future<dynamic> addParty({required String? imageFilePath,required Map<String,dynamic> data})async{
   final UserController userController = Get.find<UserController>();
 
+  Future<void> uploadPost({
+    required int partyId,
+    required List<XFile> images,
+  }) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('${dotenv.env['DARNRAM_URL']}/party/add/img'),
+    )
+      ..headers.addAll({
+        'Content-Type': 'application/json',
+        'Member-Id': 'DHI ${userController.memberId.value}',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${userController.accessToken.value}',
+      })
+      ..fields['partyId'] = partyId.toString();
 
+    for (var image in images) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'img',
+        image.path,
+      ));
+    }
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200) {
+      print('Response body: ${response.body}');
+      throw Exception('Failed to upload post.');
+    }
+  }
   try{
     final dataEncode = jsonEncode(data);
     var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party/add/without-img');
@@ -65,15 +95,14 @@ Future<dynamic> addParty({required String? imageFilePath,required Map<String,dyn
         print('postResponse.body 값 = $body');
       }
       /// Todo : 모임 비어있을 경우 테스트 필요
-     else{
+      else{
         print('바디 비어있음');
       }
     }
-
-
+    //uploadPost(partyId: '1', images: [])
 
   }catch(e){
-    print('에러 = $e');
+    print('without-img 에러 = $e');
     debugPrint('============= FAIL =============');
     return null;
   }
@@ -111,6 +140,7 @@ Future<dynamic> getMyParty()async{
         print('body[0] = ${body[0]}');
         myPartyRawData = body;
 
+        partyController.myParty.clear();
         for (var rawData in myPartyRawData){
           partyController.fetchMyParty(party: Party.fromJson(rawData));
         }
@@ -121,7 +151,7 @@ Future<dynamic> getMyParty()async{
       }
     }
   }catch(e){
-    print('에러 = $e');
+    print('getMyParty 에러 = $e');
     debugPrint('============= FAIL =============');
     return null;
   }
@@ -134,7 +164,7 @@ Future<dynamic> getParty()async{
   List<dynamic> allPartyRawData = [];
     try{
       print('토큰 값 = ${userController.accessToken.value}');
-      var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party?sortType=${partyController.sortTypeIndex.value}&pages=$PAGES');
+      var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party?sortType=${partyController.sortTypeIndex.value}');
       debugPrint('API 주소 = $url');
       final getResponse = await http.get(url, headers: {
         'Content-Type': 'application/json',
@@ -142,9 +172,9 @@ Future<dynamic> getParty()async{
         'Authorization': 'Bearer ${userController.accessToken.value}',
         'Member-Id': 'DHI ${userController.memberId.value}'
       });
-      print('body 값 = ${getResponse.body}');
+
       var body = jsonDecode(getResponse.body);
-      print('body = ${body}');
+
       if(getResponse.statusCode != 200){
         debugPrint('http 연결 문제');
         debugPrint('============= FAIL =============');
@@ -153,10 +183,10 @@ Future<dynamic> getParty()async{
         /// 받아온 Api 데이터가 있을 경우
         if(body.isNotEmpty){
           PartyController partyController = Get.find<PartyController>();
-          print('body = ${body}');
           print('body type ${body.runtimeType}');
-          print('body[0] = ${body[0]}');
+          print('body = ${body}');
           allPartyRawData = body;
+          partyController.allParty.clear();
           for (var rawData in allPartyRawData){
             partyController.fetchParty(party: Party.fromJson(rawData));
           }
@@ -168,7 +198,7 @@ Future<dynamic> getParty()async{
         }
       }
     }catch(e){
-      print('에러 = $e');
+      print('getParty 에러 = $e');
       debugPrint('============= FAIL =============');
       return null;
   }

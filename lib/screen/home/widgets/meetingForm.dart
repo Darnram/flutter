@@ -17,10 +17,16 @@ class Parties extends StatelessWidget {
   });
   PartyController partyController = Get.find<PartyController>();
 
-
+  void _loadMeeting()async{
+    print('전체 미팅 불러오기');
+    partyController.isPartyLoading.value = true;
+    await getParty();
+    partyController.isPartyLoading.value = false;
+  }
   @override
   Widget build(BuildContext context) {
 
+    _loadMeeting();
 
     return Obx(() =>
       Expanded(

@@ -12,7 +12,6 @@ class Party{
   late int max;
   late int currentCount;
   late int partyType;
-  late bool hasNextSlice;
 
   Party({
     required this.partyId,
@@ -25,7 +24,6 @@ class Party{
     required this.max,
     required this.currentCount,
     required this.partyType,
-    required this.hasNextSlice,
 });
   Party.fromJson(Map<String, dynamic>? map){
     partyId = map?['partyId'] ?? '';
@@ -38,7 +36,6 @@ class Party{
     max = map?['max'] ?? '';
     currentCount = map?['currentCount'] ?? '';
     partyType = int.parse(map?['partyType'] ?? '0');
-    hasNextSlice = map?['hasNextSlice'] ?? '';
 
   }
 

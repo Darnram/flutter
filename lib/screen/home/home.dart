@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
       }
 
     }
-    _loadMeeting();
+
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
