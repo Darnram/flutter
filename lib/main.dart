@@ -23,7 +23,6 @@ void main() async{
 
   runApp(const Daram());
 }
-const String SORT_TYPE = '0';
 const String PAGES = '0';
 class Daram extends StatelessWidget {
   const Daram({super.key});

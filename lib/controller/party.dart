@@ -17,6 +17,8 @@ class PartyController extends GetxController{
   final Rx<bool> isPartyLoading = false.obs;
   final Rx<bool> isMyPartyLoading = false.obs;
   final RxList<Party> myParty = <Party>[].obs;
+  final Rx<int> sortTypeIndex = 0.obs;
+  final RxList<String> sortType = ['인기순','최신순'].obs;
 
 
   void addImage({required XFile? imageFile}){

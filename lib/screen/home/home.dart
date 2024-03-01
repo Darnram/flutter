@@ -38,6 +38,25 @@ class HomeScreen extends StatelessWidget {
     }
     final MeetingTabController meetingTabController = Get.put(MeetingTabController());
 
+    void _loadMeeting()async{
+      print('전체 미팅 불러오기');
+      _partyController.isPartyLoading.value = true;
+      await getParty();
+      _partyController.isPartyLoading.value = false;
+    }
+    void changeSortType(){
+      print('필터 버튼 클릭');
+      if(_partyController.sortTypeIndex.value == 0){
+        _partyController.sortTypeIndex.value = 1;
+        _loadMeeting();
+
+      }else if(_partyController.sortTypeIndex.value == 1){
+        _partyController.sortTypeIndex.value = 0;
+        _loadMeeting();
+      }
+
+    }
+    _loadMeeting();
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -94,11 +113,16 @@ class HomeScreen extends StatelessWidget {
                                         children: [
                                           Text('인기 단람', style:TextStyle(color: COLORS.defaultBlack,fontSize: 22,fontWeight: FontWeight.w600,),),
                                           GestureDetector(
-                                            child: Row(
-                                              children: [
-                                                Icon(Icons.filter_list_alt),
-                                                Text('인기순',style:TextStyle(fontSize: 15,color: COLORS.defaultBlack2,),),
-                                              ],
+                                            onTap: (){
+                                              changeSortType();
+                                            },
+                                            child: Obx(() =>
+                                              Row(
+                                                children: [
+                                                  Icon(Icons.filter_list_alt),
+                                                  Text('${_partyController.sortType[_partyController.sortTypeIndex.value]}',style:TextStyle(fontSize: 15,color: COLORS.defaultBlack2,),),
+                                                ],
+                                              ),
                                             ),
                                           )
                                         ],

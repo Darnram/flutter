@@ -128,7 +128,7 @@ class MyParties extends StatelessWidget {
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 6),
-                            child: Text('#${_partyController.myParty[index].partyType}',style:TextStyle(color: COLORS.defaultBlack2),),
+                            child: Text('#${categories[_partyController.myParty[index].partyType]}',style:TextStyle(color: COLORS.defaultBlack2),),
                             decoration: BoxDecoration(
                               color: COLORS.hashTagBackground,
                               border: Border.all(color: COLORS.hashTagBorder,width: 1),

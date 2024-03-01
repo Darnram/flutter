@@ -129,11 +129,12 @@ Future<dynamic> getMyParty()async{
 
 Future<dynamic> getParty()async{
   final UserController userController = Get.find<UserController>();
+  final PartyController partyController = Get.find<PartyController>();
   print('getParty 시작');
   List<dynamic> allPartyRawData = [];
     try{
       print('토큰 값 = ${userController.accessToken.value}');
-      var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party?sortType=$SORT_TYPE&pages=$PAGES');
+      var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party?sortType=${partyController.sortTypeIndex.value}&pages=$PAGES');
       debugPrint('API 주소 = $url');
       final getResponse = await http.get(url, headers: {
         'Content-Type': 'application/json',

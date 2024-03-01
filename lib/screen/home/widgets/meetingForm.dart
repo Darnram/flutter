@@ -16,18 +16,11 @@ class Parties extends StatelessWidget {
     super.key,
   });
   PartyController partyController = Get.find<PartyController>();
-  void _loadMeeting()async{
-    final PartyController _partycontroller = Get.find<PartyController>();
-    _partycontroller.isPartyLoading.value = true;
-    await getParty();
-    _partycontroller.isPartyLoading.value = false;
-  }
+
 
   @override
   Widget build(BuildContext context) {
 
-_loadMeeting();
-    List<Party> parties = partyController.allParty;
 
     return Obx(() =>
       Expanded(
@@ -126,7 +119,7 @@ _loadMeeting();
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 6),
-                          child: Text('#${categories[parties[index].partyType]}',style:TextStyle(color: COLORS.defaultBlack2),),
+                          child: Text('#${categories[partyController.allParty[index].partyType]}',style:TextStyle(color: COLORS.defaultBlack2),),
                           decoration: BoxDecoration(
                             color: COLORS.hashTagBackground,
                             border: Border.all(color: COLORS.hashTagBorder,width: 1),
