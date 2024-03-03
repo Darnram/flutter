@@ -20,13 +20,15 @@ class MyParties extends StatelessWidget {
 
   void _loadMyParty() async{
     final PartyController _partyController = Get.find<PartyController>();
+    print('-----전체 파티 로딩 중-----');
     _partyController.isMyPartyLoading.value = true;
     await getMyParty();
     _partyController.isMyPartyLoading.value = false;
+    print('-----전체 파티 로딩 끝-----');
+
   }
   @override
   Widget build(BuildContext context) {
-
     _loadMyParty();
 
   print('_partyController.myParty = ${_partyController.myParty}');
@@ -47,7 +49,6 @@ class MyParties extends StatelessWidget {
             itemCount: _partyController.myParty.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-
               return GestureDetector(
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const FeedScreen())),

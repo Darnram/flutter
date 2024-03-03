@@ -19,6 +19,7 @@ class PartyController extends GetxController{
   final RxList<Party> myParty = <Party>[].obs;
   final Rx<int> sortTypeIndex = 0.obs;
   final RxList<String> sortType = ['인기순','최신순'].obs;
+  final RxList<XFile?> newImage = <XFile?>[].obs;
 
 
   void addImage({required XFile? imageFile}){

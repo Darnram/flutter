@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daram/controller/party.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,10 +21,9 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
   void _onImageEdit(){
     Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ImageUploadScreen()));
   }
-
+  final PartyController _partyController = Get.find<PartyController>();
   Future<void> _onCreateMeeting({required Map<String,dynamic>data, required String? imageFilePath})async{
     await addParty(imageFilePath: imageFilePath,data: data).then((value)async{
-      final PartyController _partyController = Get.find<PartyController>();
       _partyController.isMyPartyLoading.value = true;
         await getMyParty();
           _partyController.isMyPartyLoading.value = false;
@@ -70,11 +71,23 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
                   onTap: _onImageEdit,
                   child: Container(height: 150,
                     alignment: Alignment.center,
-                    child: Container(
-                    width: 100,height: 100,
-                    child: Center(child: Text('이미지')),decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: Colors.grey.shade300,),),
+                    child: Obx(()=>
+                       Container(
+                      width: 100,height: 100,
+                      child: (_partyController.newImage.value != null && _partyController.newImage.isNotEmpty ) ?Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            image:
+                            DecorationImage(
+                                fit: BoxFit.cover,  //사진을 크기를 상자 크기에 맞게 조절
+                                image: FileImage(File(_partyController.newImage[0]!.path   // images 리스트 변수 안에 있는 사진들을 순서대로 표시함
+                                ))
+                            )
+                        ),
+                      ) : Center(child: Text('이미지')),decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.grey.shade300,),),
+                    ),
                   ),
                 ),
                 TextField(decoration: InputDecoration(hintText: '모임 이름을 입력해주세요.'),),

@@ -123,10 +123,9 @@ Future<dynamic> getMyParty()async{
       'Authorization': 'Bearer ${userController.accessToken.value}',
       'Member-Id': 'DHI ${userController.memberId.value}'
     });
-    print('getResponse 값 = ${getResponse}');
-    print('getResponse.body 값 = ${getResponse.body}');
+
     var body = jsonDecode(getResponse.body);
-    print('getMyParty 리스폰스값 = ${body}');
+
     if(getResponse.statusCode != 200){
       debugPrint('http 연결 문제');
       debugPrint('============= FAIL =============');
@@ -137,7 +136,6 @@ Future<dynamic> getMyParty()async{
         PartyController partyController = Get.find<PartyController>();
         print('body = ${body}');
         print('body type ${body.runtimeType}');
-        print('body[0] = ${body[0]}');
         myPartyRawData = body;
 
         partyController.myParty.clear();

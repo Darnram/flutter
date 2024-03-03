@@ -63,9 +63,13 @@ class ImageUploadScreenState extends State<ImageUploadScreen> {
                         child: IconButton(
                             onPressed: () async {multiImage = await picker.pickMultiImage();
                             setState(() {
-
                               images.addAll(multiImage);
                             });
+                            _partyController.newImage.clear();
+                            _partyController.newImage.addAll(images);
+                            print('_partyController.newImage = ${_partyController.newImage}');
+                            images.clear();
+                            Navigator.of(context).pop();
                             },
                             icon: Icon(
                               Icons.add_photo_alternate_outlined,
