@@ -48,6 +48,11 @@ class ImageUploadScreenState extends State<ImageUploadScreen> {
                                 setState(() {
                                   images.add(image);
                                 });
+                                _partyController.newImage.clear();
+                                _partyController.newImage.addAll(images);
+                                print('_partyController.newImage = ${_partyController.newImage}');
+                                images.clear();
+                                Navigator.of(context).pop();
                               }
                             },
                             icon: Icon(Icons.add_a_photo, size: 30, color: Colors.white,)
@@ -73,30 +78,6 @@ class ImageUploadScreenState extends State<ImageUploadScreen> {
                             },
                             icon: Icon(
                               Icons.add_photo_alternate_outlined,
-                              size: 30,
-                              color: Colors.white,
-                            )
-                        )
-                    ),
-                    Container(
-                        margin: EdgeInsets.all(10),
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(color: Colors.lightBlueAccent, borderRadius: BorderRadius.circular(5),
-                          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.5), spreadRadius: 0.5, blurRadius: 5)],
-                        ),
-                        child: IconButton(
-                            onPressed: () async {
-                            setState(() {
-                              if(images.first != null){
-                                _partyController.addImage(imageFile: images.first);
-                              }
-                            });
-                            if(images.first != null){
-                              //addParty(imageFilePath: images.first!.path);
-    }
-                            },
-                            icon: Icon(
-                              Icons.add_to_photos_rounded,
                               size: 30,
                               color: Colors.white,
                             )
