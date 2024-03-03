@@ -3,6 +3,7 @@
 
 import 'dart:io';
 
+import 'package:daram/controller/new_party.dart';
 import 'package:daram/controller/party.dart';
 import 'package:daram/controller/user.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +35,11 @@ const List<String> categories = [
 
 
 
-Future<dynamic> addParty({required String? imageFilePath,required Map<String,dynamic> data})async{
+Future<dynamic> addParty({required Map<String,dynamic> data})async{
   final UserController userController = Get.find<UserController>();
-
+  final NewPartyController newPartyController = Get.find<NewPartyController>();
   Future<void> uploadPost({
     required int partyId,
-    required List<XFile> images,
   }) async {
     var request = http.MultipartRequest(
       'POST',
@@ -53,11 +53,13 @@ Future<dynamic> addParty({required String? imageFilePath,required Map<String,dyn
       })
       ..fields['partyId'] = partyId.toString();
 
-    for (var image in images) {
-      request.files.add(await http.MultipartFile.fromPath(
-        'img',
-        image.path,
-      ));
+    for (var image in newPartyController.newImage) {
+      if(image != null){
+        request.files.add(await http.MultipartFile.fromPath(
+          'img',
+          image.path,
+        ));
+      }
     }
 
     var streamedResponse = await request.send();
@@ -93,6 +95,7 @@ Future<dynamic> addParty({required String? imageFilePath,required Map<String,dyn
       /// 받아온 Api 데이터가 있을 경우
       if(body.isNotEmpty){
         print('postResponse.body 값 = $body');
+        //uploadPost(partyId: )
       }
       /// Todo : 모임 비어있을 경우 테스트 필요
       else{

@@ -72,7 +72,7 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
   }
 
   Future<void> _onCreateMeeting({required Map<String,dynamic>data, required String? imageFilePath})async{
-    await addParty(imageFilePath: imageFilePath,data: data).then((value)async{
+    await addParty(data: data).then((value)async{
       _partyController.isMyPartyLoading.value = true;
         await getMyParty();
           _partyController.isMyPartyLoading.value = false;
@@ -94,17 +94,7 @@ void onTapScaffold(){
   @override
   Widget build(BuildContext context) {
 
-    Map<String, dynamic> meetingData = {
-      'title' : '',
-      'description' : '',
-      'password' : '',
-      'partyType' : 0,
-      'max' : 0,
-      'location' :'',
-      'memberEmail' : '',
-      'startedAt' : '',
-      'endAt' : '',
-    };
+
     Map<String,dynamic> meetingImage = {
       'img' : null,
     };
@@ -126,6 +116,21 @@ void onTapScaffold(){
                 //await _onCreateMeeting(data: meetingData, imageFilePath: null)
                 _newPartyController.printAllNewParty();
                 print('통과 유무 =${_newPartyController.checkNewParty()}');
+                if(_newPartyController.checkNewParty()){
+                  Map<String, dynamic> meetingData = {
+                    'title' : '${_newPartyController.title}',
+                    'description' : '${_newPartyController.description}',
+                    'password' : '${_newPartyController.password}',
+                    'partyType' : _newPartyController.partyType.value,
+                    'max' : _newPartyController.max.value,
+                    'location' :'${_newPartyController.location}',
+                    'memberEmail' : '${_newPartyController.memberEmail}',
+                    'startedAt' : '${_newPartyController.startAt}',
+                    'endAt' : '${_newPartyController.endAt}',
+                  };
+                  addParty( data: meetingImage);
+                  Navigator.of(context).pop();
+                }
               }, child: Text('만들기'),),
             ],
 
