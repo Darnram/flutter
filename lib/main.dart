@@ -12,10 +12,8 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'constants/Colors.dart';
 import 'controller/party.dart';
 
-void main() async{
-
-  await dotenv.load(fileName: '.env').then((value){
-
+void main() async {
+  await dotenv.load(fileName: '.env').then((value) {
     print('값1 == ${dotenv.env['KAKAO_NATIVE_KEY']}');
     print('값2 == ${dotenv.env['DARNRAM_URL']}');
   });
@@ -24,7 +22,9 @@ void main() async{
 
   runApp(const Daram());
 }
+
 const String PAGES = '0';
+
 class Daram extends StatelessWidget {
   const Daram({super.key});
   @override
@@ -52,7 +52,6 @@ class Daram extends StatelessWidget {
         home: FutureBuilder(
             future: getAutoLogin(),
             builder: (context, snapshot) {
-
               print('스냅샷 = ${snapshot.data}');
               if (snapshot.hasError || snapshot.data == null) {
                 return const Center(
@@ -60,7 +59,7 @@ class Daram extends StatelessWidget {
                 );
               }
               if (snapshot.connectionState == ConnectionState.done) {
-                return snapshot.data! ? HomeScreen(): LoginScreen();
+                return snapshot.data! ? HomeScreen() : const LoginScreen();
               }
               return const CircularProgressIndicator();
             }),

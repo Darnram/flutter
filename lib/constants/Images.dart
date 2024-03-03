@@ -23,4 +23,14 @@ class IMAGES {
   static const String feedImage = 'images/feed/feed_image.png';
   static const String avatar = 'images/feed/avatar.png';
   static const String arrowLeft = 'images/common/arrowLeft.png';
+  static const String calendar = 'images/feed/calendar.png';
+  static const String alarm = 'images/feed/alarm.png';
+  static const String location = 'images/feed/location.png';
+  static const String user = 'images/feed/user.png';
+  static const String comment = 'images/feed/comment.png';
+  static const String heart = 'images/feed/heart.png';
+  static const String close = 'images/common/close.png';
+  static const String camera = 'images/feed/camera.png';
+  static const String filledHeart = 'images/feed/filledHeart.png';
+  static const String send = 'images/feed/send.png';
 }
