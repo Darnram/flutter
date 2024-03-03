@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final PartyController _partyController =  Get.put(PartyController());
+    final PartyController _partyController =  Get.find<PartyController>();
 
     void _onSearchTap(){
       Navigator.of(context).push(MaterialPageRoute(builder: (context)=> SearchScreen()));

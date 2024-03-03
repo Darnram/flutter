@@ -1,3 +1,4 @@
+import 'package:daram/controller/new_party.dart';
 import 'package:daram/controller/party.dart';
 import 'package:daram/provider/login.dart';
 import 'package:daram/widgets/authentication/social_login.dart';
@@ -19,7 +20,7 @@ class LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(PartyController());
+
     return GestureDetector(
       onTap:() async{
         print('네이버 로그인 버튼 클릭');

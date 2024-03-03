@@ -1,3 +1,4 @@
+import 'package:daram/controller/new_party.dart';
 import 'package:daram/controller/party.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +19,8 @@ List<XFile?> multiImage = []; // 갤러리에서 여러장의 사진을 선택�
 List<XFile?> images = []; // 가져온 사진들을 보여주기 위한 변수
 
 class ImageUploadScreenState extends State<ImageUploadScreen> {
-  final PartyController _partyController = Get.find<PartyController>();
+
+  final NewPartyController _newPartyController = Get.find<NewPartyController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +50,9 @@ class ImageUploadScreenState extends State<ImageUploadScreen> {
                                 setState(() {
                                   images.add(image);
                                 });
-                                _partyController.newImage.clear();
-                                _partyController.newImage.addAll(images);
-                                print('_partyController.newImage = ${_partyController.newImage}');
+                                _newPartyController.newImage.clear();
+                                _newPartyController.newImage.addAll(images);
+                                print('_partyController.newImage = ${_newPartyController.newImage}');
                                 images.clear();
                                 Navigator.of(context).pop();
                               }
@@ -70,9 +72,9 @@ class ImageUploadScreenState extends State<ImageUploadScreen> {
                             setState(() {
                               images.addAll(multiImage);
                             });
-                            _partyController.newImage.clear();
-                            _partyController.newImage.addAll(images);
-                            print('_partyController.newImage = ${_partyController.newImage}');
+                            _newPartyController.newImage.clear();
+                            _newPartyController.newImage.addAll(images);
+                            print('_partyController.newImage = ${_newPartyController.newImage}');
                             images.clear();
                             Navigator.of(context).pop();
                             },

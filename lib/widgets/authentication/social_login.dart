@@ -25,7 +25,7 @@ enum SNS {apple, naver, kakao}
 Future<bool?> socialLogin({required Login loginType, required BuildContext context/*, required AppLocation location*/}) async {
 
   bool? loginSuccess = true;
-
+  final UserController userController = Get.find<UserController>();
 
   /// 로그인 Process 2-1
   switch(loginType){
@@ -49,7 +49,7 @@ Future<bool?> socialLogin({required Login loginType, required BuildContext conte
           print('네이버 받아온 데이터 = $data');
           final jsonData = jsonEncode(data);
           print('loginSignUp 시작함');
-          final UserController userController = Get.put(UserController());
+
           final userData = await loginSignUp(data: jsonData);
           if(userData != null){
             userController.fetchUser(userForm: userData) ;
@@ -119,7 +119,7 @@ Future<kakao.User?> KakaoSignIn() async {
         print('토큰 value = $value');
       });
       print('카톡 로그인 진행함');
-      final UserController userController = Get.put(UserController());
+      final UserController userController = Get.find<UserController>();
       user = await kakao.UserApi.instance.me();
       print('유저 정보 = $user');
       final Map<String,dynamic> data =
