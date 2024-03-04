@@ -72,6 +72,7 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
   }
   try{
     final dataEncode = jsonEncode(data);
+    print('dataEncode = ${dataEncode}');
     var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party/add/without-img');
     debugPrint('API 주소 = $url');
     debugPrint('보내는 데이터 = ${dataEncode.runtimeType}');
@@ -82,6 +83,7 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
       'Authorization': 'Bearer ${userController.accessToken.value}',
     },body: dataEncode);
     final body = postResponse.body;
+    print('body = ${body}');
     print('postResponse 값 = ${postResponse.statusCode}');
     //var body = jsonDecode(postResponse.body);
     if(postResponse.statusCode != 200){
@@ -94,7 +96,8 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
     }else{
       /// 받아온 Api 데이터가 있을 경우
       if(body.isNotEmpty){
-        print('postResponse.body 값 = $body');
+        print('postResponse.body 값 = ${json.decode(body)}');
+
         //uploadPost(partyId: )
       }
       /// Todo : 모임 비어있을 경우 테스트 필요
@@ -102,8 +105,10 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
         print('바디 비어있음');
       }
     }
-    //uploadPost(partyId: '1', images: [])
-
+    final mapData = json.decode(body);
+    print('body party id = ${mapData['partyId']}');
+    uploadPost(partyId: int.parse(mapData['partyId']));
+    newPartyController.clearNewParty();
   }catch(e){
     print('without-img 에러 = $e');
     debugPrint('============= FAIL =============');

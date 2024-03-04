@@ -10,8 +10,8 @@ class NewPartyController extends GetxController{
   final Rx<int> max = 0.obs;
   final Rx<String> location = ''.obs;
   final Rx<String> memberEmail = ''.obs;
-  final Rx<String> startAt = ''.obs;
-  final Rx<String> endAt = ''.obs;
+  final Rx<String> startAt = '2022-02-20'.obs;
+  final Rx<String> endAt = '2022-02-22'.obs;
   final RxList<XFile?> newImage = <XFile?>[].obs;
   //Rx<int> selectedCategory = 0.obs;
 
@@ -34,8 +34,8 @@ class NewPartyController extends GetxController{
     max.value = 0;
     location.value = '';
     memberEmail.value = '';
-    startAt.value = '';
-    endAt.value = '';
+    startAt.value = '2022-02-20';
+    endAt.value = '2022-02-22';
     newImage.value = [];
   }
   void printAllNewParty(){
@@ -69,14 +69,3 @@ class NewPartyController extends GetxController{
 
   }
 }
-Map<String, dynamic> meetingData = {
-  'title' : '',
-  'description' : '',
-  'password' : '',
-  'partyType' : 0,
-  'max' : 0,
-  'location' :'',
-  'memberEmail' : '',
-  'startedAt' : '',
-  'endAt' : '',
-};

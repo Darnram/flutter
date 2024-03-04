@@ -128,7 +128,7 @@ void onTapScaffold(){
                     'startedAt' : '${_newPartyController.startAt}',
                     'endAt' : '${_newPartyController.endAt}',
                   };
-                  addParty( data: meetingImage);
+                  addParty( data: meetingData);
                   Navigator.of(context).pop();
                 }
               }, child: Text('만들기'),),
@@ -217,6 +217,7 @@ void onTapScaffold(){
                   Row(
 
                     children: [
+
                       Text('${_newPartyController.startAt.value} ~ ${_newPartyController.endAt.value}')
                     ],
                   ),
