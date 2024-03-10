@@ -38,9 +38,10 @@ const List<String> categories = [
 Future<dynamic> addParty({required Map<String,dynamic> data})async{
   final UserController userController = Get.find<UserController>();
   final NewPartyController newPartyController = Get.find<NewPartyController>();
-  Future<void> uploadPost({
+  Future<dynamic> uploadPost({
     required int partyId,
   }) async {
+    print('이미지 추가 api 진입');
     var request = http.MultipartRequest(
       'POST',
       Uri.parse('${dotenv.env['DARNRAM_URL']}/party/add/img'),
@@ -52,9 +53,10 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
         'Authorization': 'Bearer ${userController.accessToken.value}',
       })
       ..fields['partyId'] = partyId.toString();
-
+print('이미지 request = ${request}');
     for (var image in newPartyController.newImage) {
       if(image != null){
+        print('이미지 추가하기');
         request.files.add(await http.MultipartFile.fromPath(
           'img',
           image.path,
@@ -62,12 +64,18 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
       }
     }
 
+    print('streamedResponse시작');
     var streamedResponse = await request.send();
+    print('streamedResponse 종료');
     var response = await http.Response.fromStream(streamedResponse);
-
+  print('response = ${response.statusCode}');
     if (response.statusCode != 200) {
+      print('실패함');
       print('Response body: ${response.body}');
       throw Exception('Failed to upload post.');
+    }else{
+      print('Response body: ${response.body}');
+      return true;
     }
   }
   try{
@@ -92,7 +100,7 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
       postResponse.printError();
       debugPrint('http 연결 문제');
       debugPrint('============= FAIL =============');
-      return null;
+      return false;
     }else{
       /// 받아온 Api 데이터가 있을 경우
       if(body.isNotEmpty){
@@ -107,13 +115,21 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
     }
     final mapData = json.decode(body);
     print('body party id = ${mapData['partyId']}');
-    uploadPost(partyId: int.parse(mapData['partyId']));
-    newPartyController.clearNewParty();
+    print('데이터 타입 = ${mapData['partyId'].runtimeType}');
+    /*await uploadPost(partyId: mapData['partyId']).then((value){
+      newPartyController.clearNewParty();
+      if(value){
+        return true;
+      }else{
+        return false;
+      }
+    });*/
   }catch(e){
     print('without-img 에러 = $e');
     debugPrint('============= FAIL =============');
-    return null;
+    return false;
   }
+  return true;
 }
 
 

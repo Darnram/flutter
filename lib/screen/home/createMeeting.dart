@@ -49,11 +49,11 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
       print('inputPassword.value.text = ${inputPassword.value.text}');
       _newPartyController.password.value = inputPassword.value.text;
     });
-    inputCalendar.addListener(() {
+    /*inputCalendar.addListener(() {
       print('inputCalendar.value.text = ${inputCalendar.value.text}');
+      inputCalendar.text = '${_newPartyController.start} ~ ${_newPartyController.end}';
       //_newPartyController.startAt.value = inputCalendar.value.text;
-      //_newPartyController.startAt.value = inputCalendar.value.text;
-    });
+    });*/
     inputLocation.addListener(() {
       print('inputLocation.value.text = ${inputLocation.value.text}');
       _newPartyController.location.value = inputLocation.value.text;
@@ -71,18 +71,19 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
     Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ImageUploadScreen()));
   }
 
-  Future<void> _onCreateMeeting({required Map<String,dynamic>data, required String? imageFilePath})async{
+  Future<void> _onCreateMeeting({required Map<String,dynamic>data})async{
     await addParty(data: data).then((value)async{
-      _partyController.isMyPartyLoading.value = true;
+      if(value){
+        _partyController.isMyPartyLoading.value = true;
         await getMyParty();
-          _partyController.isMyPartyLoading.value = false;
+        _partyController.isMyPartyLoading.value = false;
 
-      _partyController.isPartyLoading.value = true;
+        _partyController.isPartyLoading.value = true;
         await getParty().then((value){
           _partyController.isPartyLoading.value = false;
           Navigator.of(context).pop();
         });
-
+      }
     });
   }
 
@@ -90,14 +91,55 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
 void onTapScaffold(){
     FocusScope.of(context).unfocus();
 }
+  Future<void> selectDateTimeRange() async {
+    final NewPartyController _newPartyController = Get.find<NewPartyController>();
+    final selectedDateRange = await showDateRangePicker(
+      context: context,
+      saveText: "Select",
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              // primary: MyColors.primary,
+              primary: Theme
+                  .of(context)
+                  .colorScheme
+                  .primary,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            //.dialogBackgroundColor:Colors.blue[900],
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedDateRange == null) {
+      return null;
+    } else {
+      print('selectedDateRange = ${selectedDateRange}');
+      print('start = ${selectedDateRange.start}');
+      print('end = ${selectedDateRange.end}');
+      _newPartyController.startAt.value = '${selectedDateRange.start}'.split(' ')[0];
+      _newPartyController.endAt.value = '${selectedDateRange.end}'.split(' ')[0];
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
 
-
+    inputCalendar.text = '${_newPartyController.startAt} ~ ${_newPartyController.endAt}';
     Map<String,dynamic> meetingImage = {
       'img' : null,
     };
+
+
     return GestureDetector(
       onTap:
         onTapScaffold
@@ -113,7 +155,7 @@ void onTapScaffold(){
             title: Text('모임개설',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
             actions: [
               TextButton(onPressed:()async{
-                //await _onCreateMeeting(data: meetingData, imageFilePath: null)
+
                 _newPartyController.printAllNewParty();
                 print('통과 유무 =${_newPartyController.checkNewParty()}');
                 if(_newPartyController.checkNewParty()){
@@ -128,8 +170,12 @@ void onTapScaffold(){
                     'startedAt' : '${_newPartyController.startAt}',
                     'endAt' : '${_newPartyController.endAt}',
                   };
-                  addParty( data: meetingData);
-                  Navigator.of(context).pop();
+                  await _onCreateMeeting(data: meetingData);
+                 /* await addParty( data: meetingData).then((value){
+                    if(value){
+                      Navigator.of(context).pop();
+                    }
+                  });*/
                 }
               }, child: Text('만들기'),),
             ],
@@ -214,13 +260,18 @@ void onTapScaffold(){
                   ),
                   Gaps.v20,
                    Row(children: [Text('모임일정'),Icon(Icons.calendar_month)]),
-                  Row(
+                  TextField(
+                    onTap:()async{
+                      selectDateTimeRange().then((value){
+                        setState(() {
+                        });
+                      });
+                    },
+                    readOnly: true,
 
-                    children: [
-
-                      Text('${_newPartyController.startAt.value} ~ ${_newPartyController.endAt.value}')
-                    ],
-                  ),
+                    controller: inputCalendar,
+                  )
+                  ,
                   Gaps.v20,
                   Row(children: [Text('모임장소'),Icon(Icons.gps_fixed)]),
                   TextField(
