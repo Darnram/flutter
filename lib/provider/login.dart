@@ -11,9 +11,7 @@ import '../main.dart';
 import '../models/user.dart';
 
 Future<void> deleteAutoLogin() async{
-  final UserController userController = Get.find<UserController>();
   final prefs = await SharedPreferences.getInstance();
-  await prefs.remove('memUserId');
   await Future.value([
     prefs.remove('memberId'),
     prefs.remove('accessToken'),
@@ -24,10 +22,6 @@ Future<void> deleteAutoLogin() async{
     prefs.remove('pro'),
     prefs.remove('ban'),
   ]);
-}
-Future<void> deleteLoginMethod()async{
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.remove('loginMethod');
 }
 
 Future<void> setLoginMethod({required String memUserId}) async {

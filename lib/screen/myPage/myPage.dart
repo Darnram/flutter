@@ -1,9 +1,11 @@
 import 'package:daram/constants/Gaps.dart';
 import 'package:daram/controller/user.dart';
+import 'package:daram/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constants/sizes.dart';
+import '../../provider/login.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
@@ -99,7 +101,11 @@ Gaps.v20,
                 Gaps.v5,
                 Text('개인정보 처리 방침',style: TextStyle(fontSize: 15),),
                 Gaps.v5,
-                GestureDetector(onTap: (){}, child: Text('로그아웃',style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+                GestureDetector(onTap: ()async{
+                  await deleteAutoLogin().then((value){
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
+                  });
+                }, child: Text('로그아웃',style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
                 Gaps.v5,
               ],
             ),

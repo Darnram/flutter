@@ -64,6 +64,10 @@ class _CreateMeetingScreenState extends State<CreateMeetingScreen> {
   @override
   void dispose() {
     inputTitle.dispose();
+    inputDescription.dispose();
+    inputPassword.dispose();
+    inputCalendar.dispose();
+    inputLocation.dispose();
     super.dispose();
   }
 

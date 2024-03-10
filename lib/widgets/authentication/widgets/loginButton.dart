@@ -27,7 +27,8 @@ class LoginButton extends StatelessWidget {
         await socialLogin(context: context, loginType: login).then((value)async{
           print('value = $value');
           setAutoLogin();
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+          //Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
         });
       },
       child: Container(
