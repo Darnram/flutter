@@ -42,41 +42,43 @@ Future<dynamic> addParty({required Map<String,dynamic> data})async{
     required int partyId,
   }) async {
     print('이미지 추가 api 진입');
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('${dotenv.env['DARNRAM_URL']}/party/add/img'),
-    )
-      ..headers.addAll({
-        'Content-Type': 'application/json',
-        'Member-Id': 'DHI ${userController.memberId.value}',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${userController.accessToken.value}',
-      })
-      ..fields['partyId'] = partyId.toString();
-print('이미지 request = ${request}');
-    for (var image in newPartyController.newImage) {
-      if(image != null){
-        print('이미지 추가하기');
-        request.files.add(await http.MultipartFile.fromPath(
-          'img',
-          image.path,
-        ));
-      }
-    }
 
-    print('streamedResponse시작');
-    var streamedResponse = await request.send();
-    print('streamedResponse 종료');
-    var response = await http.Response.fromStream(streamedResponse);
-  print('response = ${response.statusCode}');
-    if (response.statusCode != 200) {
-      print('실패함');
-      print('Response body: ${response.body}');
-      throw Exception('Failed to upload post.');
-    }else{
-      print('Response body: ${response.body}');
-      return true;
-    }
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${dotenv.env['DARNRAM_URL']}/party/add/img'),
+      )
+        ..headers.addAll({
+          'Content-Type': 'application/json',
+          'Member-Id': 'DHI ${userController.memberId.value}',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${userController.accessToken.value}',
+        })
+        ..fields['partyId'] = '$partyId';
+      print('이미지 request = ${request}');
+      for (var image in newPartyController.newImage) {
+        if(image != null){
+          print('이미지 추가하기');
+          request.files.add(await http.MultipartFile.fromPath(
+            'img',
+            image.path,
+          ));
+          print('request.files 사이즈 = ${request.files[0].length}');
+        }
+      }
+
+      print('streamedResponse시작');
+      var streamedResponse = await request.send();
+      print('streamedResponse 종료');
+      var response = await http.Response.fromStream(streamedResponse);
+      print('response = ${response.statusCode}');
+      if (response.statusCode != 200) {
+        print('실패함');
+        print('Response body: ${response.body}');
+        throw Exception('Failed to upload post.');
+      }else{
+        print('Response body: ${response.body}');
+        return true;
+      }
   }
   try{
     final dataEncode = jsonEncode(data);
@@ -116,14 +118,14 @@ print('이미지 request = ${request}');
     final mapData = json.decode(body);
     print('body party id = ${mapData['partyId']}');
     print('데이터 타입 = ${mapData['partyId'].runtimeType}');
-    /*await uploadPost(partyId: mapData['partyId']).then((value){
+    await uploadPost(partyId: mapData['partyId']).then((value){
       newPartyController.clearNewParty();
       if(value){
         return true;
       }else{
         return false;
       }
-    });*/
+    });
   }catch(e){
     print('without-img 에러 = $e');
     debugPrint('============= FAIL =============');
@@ -139,7 +141,7 @@ Future<dynamic> getMyParty()async{
   print('getMyParty 시작');
   List<dynamic> myPartyRawData = [];
   try{
-    var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party/my?pages=$PAGES');
+    var url = Uri.parse('${dotenv.env['DARNRAM_URL']}/party/my');
     debugPrint('API 주소 = $url');
     final getResponse = await http.get(url, headers: {
       'Content-Type': 'application/json',
