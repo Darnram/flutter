@@ -1,3 +1,4 @@
+import 'package:daram/screen/myPage/myPage.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants/Colors.dart';
@@ -50,7 +51,9 @@ class BottomNavigator extends StatelessWidget {
                   child: Image.asset(IMAGES.homeAdd,color: Colors.white,),),
               ),
               Image.asset(IMAGES.homeScore,color: COLORS.bottomNavigatorImage,),
-              Image.asset(IMAGES.homeMore,color: COLORS.bottomNavigatorImage,)
+              GestureDetector(onTap: (){
+Navigator.of(context).push(MaterialPageRoute(builder: (context) => MyPage()));
+              }, child: Image.asset(IMAGES.homeMore,color: COLORS.bottomNavigatorImage,))
             ],
           )),
     );
