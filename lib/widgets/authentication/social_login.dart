@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:daram/widgets/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
@@ -30,7 +31,8 @@ Future<bool?> socialLogin({required Login loginType, required BuildContext conte
   /// 로그인 Process 2-1
   switch(loginType){
     case Login.apple:
-
+      loginSuccess = false;
+      await showAlert(context:context);
       break;
     case Login.naver:
       print('네이버 케이스');
@@ -54,12 +56,15 @@ Future<bool?> socialLogin({required Login loginType, required BuildContext conte
           if(userData != null){
             userController.fetchUser(userForm: userData) ;
             userController.showUser();
+          }else{
+            loginSuccess = false;
           }
           print('loginSignUp 종료함');
         }
       }catch(error){
         print('에러 = $error');
         if (error is PlatformException && error.code == 'CANCELED') {
+          loginSuccess = false;
           return null;
         }
         debugPrint(error.toString());
@@ -72,9 +77,11 @@ Future<bool?> socialLogin({required Login loginType, required BuildContext conte
         final kakao.User? user = await KakaoSignIn();
         if (user == null) {
           print(' 유저 정보 없음');
+          loginSuccess = false;
         }
       }catch(error){
         print('error = $error');
+        loginSuccess = false;
       }
   }
   return loginSuccess;
@@ -183,7 +190,7 @@ String errorString({required ErrorCase errorCase}){
   return result;
 }
 
-void errorDialog({required BuildContext context,required  ErrorCase? errorCase, required String stringOfLocation}){
+void errorDialog({required BuildContext context,required  ErrorCase? errorCase, required String stringOfLocation})async{
 
   print('에러나는 위치 = $stringOfLocation');
   if(errorCase == null){
@@ -191,28 +198,5 @@ void errorDialog({required BuildContext context,required  ErrorCase? errorCase, 
     return;
   }
   final String msg = errorString(errorCase: errorCase);
-  showDialog(context: context, builder: (BuildContext context){
-    return AlertDialog(
-      actions: [
-        TextButton(
-          child: const Text('확인', style:TextStyle(color:Colors.black)),
-          onPressed: (){
-            Navigator.of(context).pop();
-          },
-        )
-      ],
-      title: const Text('알림'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: [
-            Text('$msg에 실패했습니다.\n재차 $msg 실패 시 아래 고객센터로 문의하시기 바랍니다.\n'),
-            InkWell(onTap: (){
-              //sendEmail(context: context);
-            },
-                child:const Text('', style:TextStyle(color:Colors.blue)))
-          ],
-        ),
-      ),
-    );
-  });
+  await showAlert(context: context);
 }

@@ -23,11 +23,12 @@ class LoginButton extends StatelessWidget {
 
     return GestureDetector(
       onTap:() async{
-        print('네이버 로그인 버튼 클릭');
         await socialLogin(context: context, loginType: login).then((value)async{
           print('value = $value');
           setAutoLogin();
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+          if(value!= null && value){
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+          }
           //Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
         });
       },

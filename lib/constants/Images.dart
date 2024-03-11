@@ -11,8 +11,13 @@ class IMAGES {
   static const String notification = 'images/common/notification.png';
   static const String search = 'images/common/search.png';
   static const String homeHome = 'images/home/main/home.png';
+  static const String homeHomeIcon = 'images/home/main/onlyHomeIcon.png';
+  static const String homeCalendarIcon = 'images/home/main/onlyCalendarIcon.png';
+  static const String homeFlag = 'images/home/main/flag.png';
+  static const String homeCategory = 'images/home/main/Category.png';
   static const String homeCalendar = 'images/home/main/calendar.png';
   static const String homeMore = 'images/home/main/more.png';
+  static const String homeSwap = 'images/home/main/Swap.png';
   static const String homeScore = 'images/home/main/score.png';
   static const String homeAdd = 'images/home/main/add.png';
   static const String homeNoMeeting = 'images/home/main/noMeeting.png';

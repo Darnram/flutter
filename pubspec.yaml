@@ -84,10 +84,15 @@ flutter:
     - images/common/search.png
     - images/home/main/calendar.png
     - images/home/main/home.png
+    - images/home/main/onlyHomeIcon.png
+    - images/home/main/onlyCalendarIcon.png
+    - images/home/main/flag.png
+    - images/home/main/Category.png
     - images/home/main/add.png
     - images/home/main/more.png
     - images/home/main/score.png
     - images/home/main/noMeeting.png
+    - images/home/main/Swap.png
     - images/feed/
     - images/common/
     - images/login/appleBtn.png
