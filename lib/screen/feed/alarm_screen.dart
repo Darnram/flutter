@@ -1,7 +1,6 @@
 import 'package:daram/constants/Colors.dart';
 import 'package:daram/constants/Images.dart';
 import 'package:daram/models/alarm.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -142,7 +141,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                                     top: 14,
                                     right: 20,
                                   ),
-                                  child: CupertinoSwitch(
+                                  child: Switch(
                                     value: alarm.isWork,
                                     activeColor: COLORS.main,
                                     onChanged: (bool? value) {

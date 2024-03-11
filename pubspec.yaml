@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -88,6 +90,7 @@ flutter:
     - images/home/main/onlyCalendarIcon.png
     - images/home/main/flag.png
     - images/home/main/Category.png
+    - images/home/meetings/Camera.png
     - images/home/main/add.png
     - images/home/main/more.png
     - images/home/main/score.png

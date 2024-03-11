@@ -18,11 +18,9 @@ class Parties extends StatelessWidget {
 
   void _loadMeeting() async {
     print('전체 미팅 불러오기');
-    if (partyController.isPartyLoading.value != true) {
-      partyController.isPartyLoading.value = true;
-      await getParty();
-      partyController.isPartyLoading.value = false;
-    }
+    partyController.isPartyLoading.value = true;
+    await getParty();
+    partyController.isPartyLoading.value = false;
   }
 
   @override
@@ -43,7 +41,7 @@ class Parties extends StatelessWidget {
                       const Text(
                         '아직 참여하는 모임이 없어요',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 26,
                           fontWeight: FontWeight.w600,
                           color: COLORS.homeNoMeetingText,
                         ),

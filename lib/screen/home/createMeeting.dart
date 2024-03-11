@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:daram/controller/new_party.dart';
 import 'package:daram/controller/party.dart';
 import 'package:daram/screen/home/widgets/createMeetingCategory.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../constants/Colors.dart';
 import '../../constants/Gaps.dart';
+import '../../constants/Images.dart';
 import '../../provider/party.dart';
 import 'widgets/meetingCategory.dart';
 import 'image_edit_screen.dart';
@@ -98,10 +101,11 @@ void onTapScaffold(){
   Future<void> selectDateTimeRange() async {
     final NewPartyController _newPartyController = Get.find<NewPartyController>();
     final selectedDateRange = await showDateRangePicker(
+
       context: context,
-      saveText: "Select",
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      saveText: "선택",
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -138,7 +142,9 @@ void onTapScaffold(){
   @override
   Widget build(BuildContext context) {
 
-    inputCalendar.text = '${_newPartyController.startAt} ~ ${_newPartyController.endAt}';
+    if(_newPartyController.startAt.value != '' && _newPartyController.endAt.value != ''){
+      inputCalendar.text = '${_newPartyController.startAt} ~ ${_newPartyController.endAt}';
+    }
     Map<String,dynamic> meetingImage = {
       'img' : null,
     };
@@ -151,6 +157,8 @@ void onTapScaffold(){
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.white,
+
             centerTitle: true,
             leading: IconButton(icon: Icon(Icons.arrow_back,),onPressed: (){
               _newPartyController.clearNewParty();
@@ -181,7 +189,7 @@ void onTapScaffold(){
                     }
                   });*/
                 }
-              }, child: Text('만들기'),),
+              }, child: Obx(() => Text('만들기',style: TextStyle(color:_newPartyController.checkNewParty() ? COLORS.main :  Colors.grey,fontSize: 22))),),
             ],
 
           ),
@@ -208,13 +216,12 @@ void onTapScaffold(){
                                   ))
                               )
                           ),
-                        ) : Center(child: Text('이미지')),decoration: BoxDecoration(
+                        ) : Center(child: Image.asset(IMAGES.homeCamera,)),decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
-                          color: Colors.grey.shade300,),),
+                          color: Colors.grey.shade50,),),
                       ),
                     ),
                   ),
-                  Text('모임이름'),
                   TextField(
                     controller: inputTitle,
                     onSubmitted: (value){
@@ -222,7 +229,7 @@ void onTapScaffold(){
                     },
                     decoration: InputDecoration(hintText: '모임 이름을 입력해주세요.',),),
                   Gaps.v20,
-                  Text('모임설명'),
+                  Text('모임설명',style: TextStyle(fontSize: 17),),
                   TextField(
                     controller: inputDescription,
                     onSubmitted: (value){
@@ -232,7 +239,8 @@ void onTapScaffold(){
                   Gaps.v20,
                   Row(
                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('비공개 여부'), Switch(value: isPasswordShow,onChanged: (value){
+                      children: [Text('비공개 여부',style: TextStyle(fontSize: 17),),
+                        CupertinoSwitch(value: isPasswordShow,onChanged: (value){
                         setState(() {
                           if(value){
                             isPasswordShow = value;
@@ -250,20 +258,22 @@ void onTapScaffold(){
                     },
                     decoration: InputDecoration(hintText: isPasswordShow ? '비밀번호를 입력해주세요.' : '비공개 여부를 켜주세요.' ),),
                   Gaps.v20,
-                  Text('모임종류'),
+                  Text('모임종류',style: TextStyle(fontSize: 17),),
+                  Gaps.v10,
                   CreateMeetingCategories(),
-                  Row(children: [Text('정원수'),Icon(Icons.people)]),
-                  Text('정원 수는 최대 10명까지 가능해요!',style:TextStyle(fontSize: 10,color: Colors.grey.shade300)),
+                  Gaps.v24,
+                  Row(children: [Text('정원수',style: TextStyle(fontSize: 17),),Image.asset(IMAGES.meetingUser,color: Colors.black,width: 19,height: 20,)]),
+                  Text('정원 수는 최대 10명까지 가능해요!',style:TextStyle(fontSize: 12,color: Colors.grey.shade500)),
                   Obx(() =>Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [IconButton(onPressed: (){
                       _newPartyController.decreaseMax();
-                    }, icon: FaIcon(FontAwesomeIcons.minus)),Text('${_newPartyController.max.value}'),IconButton(
+                    }, icon: FaIcon(FontAwesomeIcons.minus,size: 20,)),Text('${_newPartyController.max.value}',style: TextStyle(fontSize: 17),),IconButton(
                         onPressed: (){
                           _newPartyController.increaseMax();
                         },
-                        icon: FaIcon(FontAwesomeIcons.plus))],),
+                        icon: FaIcon(FontAwesomeIcons.plus,size: 20,))],),
                   ),
                   Gaps.v20,
-                   Row(children: [Text('모임일정'),Icon(Icons.calendar_month)]),
+                   Row(children: [Text('모임일정',style: TextStyle(fontSize: 17),),Gaps.h4,Image.asset(IMAGES.homeCalendarIcon,width: 20,height: 20,color: Colors.black,)]),
                   TextField(
                     onTap:()async{
                       selectDateTimeRange().then((value){
@@ -274,10 +284,11 @@ void onTapScaffold(){
                     readOnly: true,
 
                     controller: inputCalendar,
+                      decoration: InputDecoration(hintText: '시작일과 종료일을 입력해주세요.')
                   )
                   ,
                   Gaps.v20,
-                  Row(children: [Text('모임장소'),Icon(Icons.gps_fixed)]),
+                  Row(children: [Text('모임장소',style: TextStyle(fontSize: 17),),Image.asset(IMAGES.meetingLocation,width: 20,height: 20,color: Colors.black,)]),
                   TextField(
                     controller: inputLocation,
                     onSubmitted: (value){

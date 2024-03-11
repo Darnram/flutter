@@ -21,6 +21,7 @@ class IMAGES {
   static const String homeScore = 'images/home/main/score.png';
   static const String homeAdd = 'images/home/main/add.png';
   static const String homeNoMeeting = 'images/home/main/noMeeting.png';
+  static const String homeCamera = 'images/home/meetings/Camera.png';
   static const String edit = 'images/feed/edit.png';
   static const String more = 'images/feed/more.png';
   static const String star = 'images/feed/star.png';

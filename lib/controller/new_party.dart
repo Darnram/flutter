@@ -11,8 +11,8 @@ class NewPartyController extends GetxController{
   final Rx<int> max = 0.obs;
   final Rx<String> location = ''.obs;
   final Rx<String> memberEmail = ''.obs;
-  final Rx<String> startAt = '${DateTime.now()}'.split(" ")[0].obs;
-  final Rx<String> endAt = '${DateTime.now()}'.split(" ")[0].obs;
+  final Rx<String> startAt = ''.obs;
+  final Rx<String> endAt = ''.obs;
   final RxList<XFile?> newImage = <XFile?>[].obs;
 
 
@@ -37,8 +37,8 @@ class NewPartyController extends GetxController{
     max.value = 0;
     location.value = '';
     memberEmail.value = '';
-    startAt.value = '2022-02-20';
-    endAt.value = '2022-02-22';
+    startAt.value = '';
+    endAt.value = '';
     newImage.value = [];
   }
   void printAllNewParty(){

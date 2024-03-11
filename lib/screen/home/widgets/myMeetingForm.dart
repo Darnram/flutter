@@ -45,7 +45,7 @@ class MyParties extends StatelessWidget {
                       const Text(
                         '아직 참여하는 모임이 없어요',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 26,
                           fontWeight: FontWeight.w600,
                           color: COLORS.homeNoMeetingText,
                         ),

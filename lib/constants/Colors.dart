@@ -13,6 +13,7 @@ class COLORS {
   static const Color bottomNavigatorBorder = Color(0xffE5E2E2);
   static const Color bottomNavigatorImage = Color(0xff8B8886);
   static const Color homeNoMeetingText = Color(0xffE5E5E4);
+  static const Color alertColor = Color(0xffF9F8F8);
 
   static const Color hrGrey = Color(0xffE5E5E5);
   static const Color pink = Color(0xffF97691);

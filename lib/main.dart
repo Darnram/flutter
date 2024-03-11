@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'constants/Colors.dart';
 import 'controller/party.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env').then((value) {
@@ -36,6 +37,14 @@ class Daram extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(390, 844),
       child: MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate
+        ],
+        supportedLocales: const [
+          Locale('ko',''),
+          Locale('en',''),
+        ],
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
             elevation: 0,
