@@ -30,11 +30,19 @@ class MyPage extends StatelessWidget {
 
               children: [
                 Container(
-                  color: Colors.grey.shade100,
-                  child: Icon(
+              clipBehavior: Clip.hardEdge,
+width: 100,
+                  child:
+                  (userController.img.value != '')
+                      ? Image.network(userController.img.value)
+                      :
+                  Icon(
                     Icons.person,
                     size: 100,
                   ),
+                  decoration: BoxDecoration(shape: BoxShape.circle,
+                    color:(userController.img.value != '')
+                        ? null : Colors.grey.shade100),
                 ),
                 Gaps.h10,
                 Expanded(
