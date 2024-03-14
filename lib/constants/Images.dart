@@ -33,4 +33,5 @@ class IMAGES {
   static const String camera = 'images/feed/camera.png';
   static const String filledHeart = 'images/feed/filledHeart.png';
   static const String send = 'images/feed/send.png';
+  static const String delete = 'images/feed/delete.png';
 }

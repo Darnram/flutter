@@ -2,6 +2,7 @@ import 'package:daram/constants/Gaps.dart';
 import 'package:daram/constants/sizes.dart';
 import 'package:daram/controller/party.dart';
 import 'package:daram/controller/tab.dart';
+import 'package:daram/screen/feed/feed_screen.dart';
 import 'package:daram/screen/home/createMeeting.dart';
 import 'package:daram/screen/home/widgets/myMeetingForm.dart';
 import 'package:daram/screen/search.dart';
@@ -17,44 +18,42 @@ import 'widgets/bottomNavigator.dart';
 import 'widgets/meetingCategory.dart';
 import 'widgets/meetingForm.dart';
 
-
-
-
 class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-
-
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final PartyController partyController = Get.find<PartyController>();
 
-    final PartyController _partyController =  Get.find<PartyController>();
-
-    void _onSearchTap(){
-      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> SearchScreen()));
+    void onSearchTap() {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const SearchScreen()));
     }
-    void _onCreateMeetingTap(){
-      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> CreateMeetingScreen()));
-    }
-    final MeetingTabController meetingTabController = Get.put(MeetingTabController());
 
-    void _loadMeeting()async{
+    void onCreateMeetingTap() {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const CreateMeetingScreen()));
+    }
+
+    final MeetingTabController meetingTabController =
+        Get.put(MeetingTabController());
+
+    void loadMeeting() async {
       print('전체 미팅 불러오기');
-      _partyController.isPartyLoading.value = true;
+      partyController.isPartyLoading.value = true;
       await getParty();
-      _partyController.isPartyLoading.value = false;
+      partyController.isPartyLoading.value = false;
     }
-    void changeSortType(){
+
+    void changeSortType() {
       print('필터 버튼 클릭');
-      if(_partyController.sortTypeIndex.value == 0){
-        _partyController.sortTypeIndex.value = 1;
-        _loadMeeting();
-
-      }else if(_partyController.sortTypeIndex.value == 1){
-        _partyController.sortTypeIndex.value = 0;
-        _loadMeeting();
+      if (partyController.sortTypeIndex.value == 0) {
+        partyController.sortTypeIndex.value = 1;
+        loadMeeting();
+      } else if (partyController.sortTypeIndex.value == 1) {
+        partyController.sortTypeIndex.value = 0;
+        loadMeeting();
       }
-
     }
 
     return SafeArea(
@@ -62,12 +61,26 @@ class HomeScreen extends StatelessWidget {
           appBar: AppBar(
             foregroundColor: COLORS.defaultGrey,
             actions: [
-              Image.asset(IMAGES.notification,width: 24,height: 24,color: COLORS.defaultGrey),
+              Image.asset(IMAGES.notification,
+                  width: 24, height: 24, color: COLORS.defaultGrey),
               Gaps.h10,
-              Image.asset(IMAGES.chat,width: 24,height: 24,),
+              GestureDetector(
+                child: Image.asset(
+                  IMAGES.chat,
+                  width: 24,
+                  height: 24,
+                ),
+                onTap: () {},
+              ),
               Gaps.h20,
             ],
-            leading: GestureDetector(onTap:_onSearchTap,child: Image.asset(IMAGES.search,width: 24,height: 24,)),
+            leading: GestureDetector(
+                onTap: onSearchTap,
+                child: Image.asset(
+                  IMAGES.search,
+                  width: 24,
+                  height: 24,
+                )),
             centerTitle: true,
             title: SizedBox(
               width: 106,
@@ -77,81 +90,101 @@ class HomeScreen extends StatelessWidget {
           ),
           body: Column(
             children: [
-
               TabBar(
                   controller: meetingTabController.controller,
                   indicatorColor: COLORS.defaultBlack,
                   unselectedLabelColor: Colors.grey,
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     fontSize: 17,
                     color: COLORS.defaultBlack,
-                    fontWeight: FontWeight.w600,),
-                  indicator: UnderlineTabIndicator(borderSide: BorderSide(width: 1,color: COLORS.main),insets: EdgeInsets.symmetric(horizontal: 14),),
-                  tabs: meetingTabController.meetingTabs
-              ),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  indicator: const UnderlineTabIndicator(
+                    borderSide: BorderSide(width: 1, color: COLORS.main),
+                    insets: EdgeInsets.symmetric(horizontal: 14),
+                  ),
+                  tabs: meetingTabController.meetingTabs),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: Sizes.size14,
                   ),
-                  child:
-                    TabBarView(
-                      controller: meetingTabController.controller,
-                      children: [
-                        Column(
-                          children: [
-                            MeetingCategories(),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('인기 단람', style:TextStyle(color: COLORS.defaultBlack,fontSize: 22,fontWeight: FontWeight.w600,),),
-                                          GestureDetector(
-                                            onTap: (){
-                                              changeSortType();
-                                            },
-                                            child: Obx(() =>
-                                              Row(
-                                                children: [
-                                                  Icon(Icons.filter_list_alt),
-                                                  Text('${_partyController.sortType[_partyController.sortTypeIndex.value]}',style:TextStyle(fontSize: 15,color: COLORS.defaultBlack2,),),
-                                                ],
-                                              ),
+                  child: TabBarView(
+                    controller: meetingTabController.controller,
+                    children: [
+                      Column(
+                        children: [
+                          MeetingCategories(),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          '인기 단람',
+                                          style: TextStyle(
+                                            color: COLORS.defaultBlack,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            changeSortType();
+                                          },
+                                          child: Obx(
+                                            () => Row(
+                                              children: [
+                                                const Icon(
+                                                    Icons.filter_list_alt),
+                                                Text(
+                                                  partyController.sortType[
+                                                      partyController
+                                                          .sortTypeIndex.value],
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                    color: COLORS.defaultBlack2,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                      Text('지금 단람에서 가장 인기 있는 모임이에요!',style:TextStyle(fontSize: 17,color:COLORS.defaultBlack2),),
-                                    ],
-                                  ),
-                                   Parties(),
-                                ],
-                              ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    const Text(
+                                      '지금 단람에서 가장 인기 있는 모임이에요!',
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          color: COLORS.defaultBlack2),
+                                    ),
+                                  ],
+                                ),
+                                Parties(),
+                              ],
                             ),
-                          ],
-                        ),
-                        // 내 모임
-                         Column(children: [MyParties()]),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      // 내 모임
+                      Column(children: [MyParties()]),
+                    ],
                   ),
                 ),
+              ),
 
               //BottomNavigator(),
             ],
           ),
           bottomNavigationBar: BottomAppBar(
             padding: EdgeInsets.zero,
-            child: BottomNavigator(onCreateMeetingTap: _onCreateMeetingTap),
-          )
-      ),
-
+            child: BottomNavigator(onCreateMeetingTap: onCreateMeetingTap),
+          )),
     );
   }
 }

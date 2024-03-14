@@ -1,8 +1,10 @@
 import 'package:daram/constants/Colors.dart';
 import 'package:daram/constants/Gaps.dart';
 import 'package:daram/constants/Images.dart';
+import 'package:daram/controller/comment.dart';
 import 'package:daram/controller/feed.dart';
 import 'package:daram/controller/post.dart';
+import 'package:daram/models/feed.dart';
 import 'package:daram/provider/feed.dart';
 import 'package:daram/widgets/comment_object_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,16 +27,25 @@ class CommentModalSheet extends StatefulWidget {
 
 class _CommentModalSheetState extends State<CommentModalSheet> {
   final String id = 'commentTextField';
+  late Future<List<CommentModel>> comments;
+
+  @override
+  void initState() {
+    super.initState();
+    comments = FeedApiService.commentAll(widget.feedId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final PostController postController = Get.put(PostController());
     FeedController feedController = Get.find<FeedController>();
+    // CommentController commentController = Get.find<CommentController>();
 
     return DraggableScrollableSheet(
       initialChildSize: 0.7,
       maxChildSize: 0.9,
       minChildSize: 0.4,
-      builder: (_, controller) => Container(
+      builder: (_, ScrollController scrollController) => Container(
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -57,16 +68,30 @@ class _CommentModalSheetState extends State<CommentModalSheet> {
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
-            Flexible(
-              child: ListView(
-                controller: controller,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 17,
-                ),
-                children: const [
-                  Comment(),
-                ],
-              ),
+            FutureBuilder<List<CommentModel>>(
+              future: comments,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('데이터 로딩에 실패했습니다.'));
+                } else {
+                  final comments = snapshot.data!;
+                  return Expanded(
+                    child: ListView.builder(
+                      // shrinkWrap: true, // 필요한 경우 shrinkWrap를 true로 설정
+                      physics: const NeverScrollableScrollPhysics(),
+                      // physics:
+                      //     const NeverScrollableScrollPhysics(), // 스크롤이 중첩되지 않도록 설정할 수도 있음
+                      padding: const EdgeInsets.symmetric(horizontal: 17),
+                      itemCount: comments.length,
+                      itemBuilder: (context, index) {
+                        return Comment(comment: comments[index]); // 실제 댓글 위젯 생성
+                      },
+                    ),
+                  );
+                }
+              },
             ),
             ConstrainedBox(
               constraints: BoxConstraints(minHeight: 96.h),
@@ -86,6 +111,7 @@ class _CommentModalSheetState extends State<CommentModalSheet> {
                     CircleAvatar(
                       radius: 20.w,
                       backgroundImage: const NetworkImage(
+                        //fix: memberAPI의 img가져와서 고치기
                         "https://via.placeholder.com/40x40",
                       ),
                     ),
@@ -110,6 +136,7 @@ class _CommentModalSheetState extends State<CommentModalSheet> {
                                     content:
                                         postController.getController(id).text,
                                   );
+
                                   print('Comment uploaded successfully.');
 
                                   postController.getController(id).clear();

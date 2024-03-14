@@ -1,12 +1,19 @@
 import 'package:daram/constants/Colors.dart';
 import 'package:daram/constants/Images.dart';
+import 'package:daram/provider/feed.dart';
 import 'package:daram/widgets/success_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ReportFeed extends StatelessWidget {
-  ReportFeed({super.key});
+class ReportFeed extends StatefulWidget {
+  final int feedId;
+  const ReportFeed({super.key, required this.feedId});
 
+  @override
+  State<ReportFeed> createState() => _ReportFeedState();
+}
+
+class _ReportFeedState extends State<ReportFeed> {
   List<String> menuItems = [
     '상업적 광고 및 판매 신고',
     '욕설/비하/비난',
@@ -75,6 +82,7 @@ class ReportFeed extends StatelessWidget {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
+                    FeedApiService.reportFeed(widget.feedId, index + 1);
                     Navigator.pop(context);
                     SuccessSnackBar.show(context, message: '귀하의 신고가 접수되었습니다.');
                   },

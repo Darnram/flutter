@@ -1,13 +1,15 @@
-import 'dart:ffi';
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:daram/constants/Images.dart';
 import 'package:daram/controller/feed.dart';
 import 'package:daram/models/feed.dart';
+import 'package:daram/provider/feed.dart';
+import 'package:daram/utils/helpers/calculate_time.dart';
 import 'package:daram/widgets/comment_modal.sheet.dart';
 import 'package:daram/widgets/feed_popup_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/Colors.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -17,17 +19,17 @@ class Feed extends StatefulWidget {
     super.key,
     required this.feed,
     required this.feedId,
-    required this.imageUri,
+    required this.imageUrl,
     required this.nickname,
     required this.time,
-    required this.feedImageUri,
     required this.like,
     required this.chatting,
     required this.comment,
     required this.member,
   });
   final FeedModel feed; //fix:밑에 변수 feed.image...로 바꾸기
-  final String imageUri, nickname, time, feedImageUri, comment;
+  final String imageUrl, nickname, time, comment;
+
   final int like, chatting, feedId;
   final Member member;
 
@@ -37,6 +39,40 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   bool isExpanded = false;
+  bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLiked();
+  }
+
+  Future<void> _checkLiked() async {
+    final prefs = await SharedPreferences.getInstance();
+    isLiked = prefs.getBool('${widget.feed.feedId}') ?? false;
+    setState(() {});
+  }
+
+  Future<void> _toggleLike() async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentState = prefs.getBool('${widget.feed.feedId}') ?? false;
+    if (currentState) {
+      await FeedApiService.unLikeFeed(widget.feed.feedId);
+      setState(() {
+        widget.feed.likeCount -= 1;
+      });
+    } else {
+      await FeedApiService.likeFeed(widget.feed.feedId);
+      setState(() {
+        widget.feed.likeCount += 1;
+      });
+    }
+    await prefs.setBool('${widget.feed.feedId}', !currentState);
+
+    setState(() {
+      isLiked = !currentState;
+    });
+  }
 
   FeedController feedController = Get.find<FeedController>();
   @override
@@ -59,7 +95,7 @@ class _FeedState extends State<Feed> {
               CircleAvatar(
                 radius: 18.w, // 반지름을 설정하여 원의 크기 조절
                 backgroundImage: NetworkImage(
-                  widget.imageUri,
+                  widget.imageUrl,
                 ),
               ),
               SizedBox(
@@ -112,7 +148,7 @@ class _FeedState extends State<Feed> {
                     ],
                   ),
                   Text(
-                    getTimeDifference(widget.time),
+                    TimeCalculator.getTimeDifference(widget.time),
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
@@ -127,86 +163,93 @@ class _FeedState extends State<Feed> {
                 ],
               ),
               const Spacer(),
-              const FeedPopupMenu(),
+              FeedPopupMenu(feed: widget.feed),
             ],
           ),
           const SizedBox(
             height: 5,
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              widget.feedImageUri,
-              width: 358,
-              height: 240,
-              fit: BoxFit.fill,
+          CarouselSlider.builder(
+            itemCount: widget.feed.images.length,
+            itemBuilder: (context, index, realIndex) {
+              return ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(10), // 여기서 원하는 만큼의 둥근 모서리 반경을 설정하세요.
+                child: Image.network(
+                  widget.feed.images[index].imageUrl,
+                  width: 358.w,
+                  height: 240.h,
+                  fit: BoxFit.fill,
+                ),
+              );
+            },
+            options: CarouselOptions(
+              enableInfiniteScroll: false,
+              aspectRatio: 1.5,
+              viewportFraction: 1,
             ),
           ),
-          Obx(
-            () => Container(
-              margin: const EdgeInsets.only(
-                top: 8,
-                left: 8,
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => feedController.toggleLike(widget.feed),
-                    child: Image.asset(
-                      widget.feed.isLiked.value
-                          ? IMAGES.filledHeart
-                          : IMAGES.heart,
-                      width: 24.w,
-                      height: 24.h,
-                    ),
+          Container(
+            margin: const EdgeInsets.only(
+              top: 8,
+              left: 8,
+            ),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: _toggleLike,
+                  child: Image.asset(
+                    isLiked ? IMAGES.filledHeart : IMAGES.heart,
+                    width: 24.w,
+                    height: 24.h,
                   ),
-                  SizedBox(
-                    width: 4.w,
+                ),
+                SizedBox(
+                  width: 4.w,
+                ),
+                Text(
+                  widget.feed.likeCount.toString(),
+                  style: TextStyle(
+                    color: COLORS.defaultBlack,
+                    fontSize: 15.sp,
+                    fontFamily: 'Pretendard',
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -0.45,
                   ),
-                  Text(
-                    widget.like.toString(),
-                    style: TextStyle(
-                      color: COLORS.defaultBlack,
-                      fontSize: 15.sp,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.45,
-                    ),
+                ),
+                SizedBox(
+                  width: 16.w,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => CommentModalSheet(
+                          feedId: widget.feedId,
+                          parentId: widget.member.memberId),
+                    );
+                  },
+                  child: Image.asset(
+                    IMAGES.comment,
+                    width: 22.w,
+                    height: 22.h,
                   ),
-                  SizedBox(
-                    width: 16.w,
+                ),
+                SizedBox(
+                  width: 4.w,
+                ),
+                Text(
+                  widget.chatting.toString(),
+                  style: TextStyle(
+                    color: COLORS.defaultBlack,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -0.45,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => CommentModalSheet(
-                            feedId: widget.feedId,
-                            parentId: widget.member.memberId),
-                      );
-                    },
-                    child: Image.asset(
-                      IMAGES.comment,
-                      width: 22.w,
-                      height: 22.h,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 4.w,
-                  ),
-                  Text(
-                    widget.chatting.toString(),
-                    style: TextStyle(
-                      color: COLORS.defaultBlack,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.45,
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
           Container(
@@ -265,21 +308,5 @@ class _FeedState extends State<Feed> {
         ],
       ),
     );
-  }
-}
-
-String getTimeDifference(String time) {
-  DateTime postTime = DateTime.parse(time);
-
-  DateTime now = DateTime.now();
-
-  Duration difference = now.difference(postTime);
-
-  if (difference.inDays > 0) {
-    return '${difference.inDays}일전';
-  } else if (difference.inHours > 0) {
-    return '${difference.inHours}시간 전';
-  } else {
-    return '${difference.inMinutes}분 전';
   }
 }

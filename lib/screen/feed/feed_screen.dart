@@ -1,5 +1,6 @@
 import 'package:daram/constants/Images.dart';
 import 'package:daram/controller/feed.dart';
+import 'package:daram/controller/user.dart';
 import 'package:daram/models/party.dart';
 
 import 'package:daram/provider/feed.dart';
@@ -25,6 +26,7 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> {
   final ScrollController _scrollController = ScrollController();
+  final UserController userController = Get.find<UserController>();
   bool _isScrolled = false;
 
   //자신의 feed
@@ -36,7 +38,7 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   void initState() {
     super.initState();
-
+    userController.showUser();
     _scrollController.addListener(_scrollListener);
     partyInfo = FeedApiService.getPartyInfo(widget.party.partyId);
     feeds = FeedApiService.getFeedAll(widget.party.partyId, 0);
@@ -89,6 +91,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => NewPostScreen(
+                              type: 0,
                               partyInfo: feedController.partyInfo.value!,
                               member: feedController.member.value!),
                         ),
@@ -191,11 +194,10 @@ class _FeedScreenState extends State<FeedScreen> {
                       child: Feed(
                           feed: feed,
                           feedId: feed.feedId,
-                          imageUri: feedController.member.value?.img ??
+                          imageUrl: feedController.member.value?.img ??
                               "https://via.placeholder.com/36x36",
                           nickname: feed.memberName,
                           time: feed.updatedAt,
-                          feedImageUri: feed.images[0].imageUrl,
                           like: feed.likeCount,
                           chatting: 10,
                           comment: feed.content,

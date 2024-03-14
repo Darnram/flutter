@@ -155,5 +155,36 @@ class FeedLike {
   });
   FeedLike.fromJson(Map<String, dynamic> json)
       : feedId = json['feedId'] ?? 0,
-        likeCount = json['likeCoung'] ?? 0;
+        likeCount = json['likeCount'] ?? 0;
+}
+
+class CommentModel {
+  late int commentId;
+  late int memberId;
+  late String memberName;
+  late String content;
+  late int likeCount;
+  late String profileImg;
+  late String createdAt;
+
+  CommentModel({
+    required this.commentId,
+    required this.memberId,
+    required this.memberName,
+    required this.content,
+    required this.likeCount,
+    required this.profileImg,
+    required this.createdAt,
+  });
+  factory CommentModel.fromJson(Map<String, dynamic> json) {
+    return CommentModel(
+      commentId: json['commentId'],
+      memberId: json['memberId'],
+      memberName: json['memberName'],
+      content: json['content'],
+      likeCount: json['likeCount'],
+      profileImg: json['profileImg'],
+      createdAt: json['createdAt'],
+    );
+  }
 }

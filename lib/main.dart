@@ -59,7 +59,9 @@ class Daram extends StatelessWidget {
                 );
               }
               if (snapshot.connectionState == ConnectionState.done) {
-                return snapshot.data! ? HomeScreen() : const LoginScreen();
+                return snapshot.data!
+                    ? const HomeScreen()
+                    : const LoginScreen();
               }
               return const CircularProgressIndicator();
             }),
