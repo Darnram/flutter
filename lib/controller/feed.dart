@@ -6,8 +6,7 @@ import 'package:get/get.dart';
 class FeedController extends GetxController {
   var isParticipate = true.obs;
   var isLeader = true.obs;
-  var isMine = false.obs;
-
+  Rx<bool> isMine = false.obs;
   var hasInput = false.obs;
 
   bool get isMemberLeader =>
@@ -20,7 +19,7 @@ class FeedController extends GetxController {
 
   void toggleLike(FeedModel feed) async {
     try {
-      FeedLike feedLike = await FeedApiService.getFeedLike(feed.feedId);
+      // FeedLike feedLike = await FeedApiService.getFeedLike(feed.feedId);
 
       feed.isLiked.value = !feed.isLiked.value;
       feed.likeCount += feed.isLiked.value ? 1 : -1;

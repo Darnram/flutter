@@ -145,6 +145,20 @@ class Member {
         ban = json['ban'];
 }
 
+class PartyMember {
+  late int memberId;
+  late String nickname;
+
+  PartyMember({
+    required this.memberId,
+    required this.nickname,
+  });
+
+  factory PartyMember.fromJson(Map<String, dynamic> json) {
+    return PartyMember(memberId: json['memberId'], nickname: json['nickname']);
+  }
+}
+
 class FeedLike {
   late int feedId;
   late int likeCount;
@@ -155,5 +169,43 @@ class FeedLike {
   });
   FeedLike.fromJson(Map<String, dynamic> json)
       : feedId = json['feedId'] ?? 0,
-        likeCount = json['likeCoung'] ?? 0;
+        likeCount = json['likeCount'] ?? 0;
+}
+
+class CommentModel {
+  late int commentId;
+  late int memberId;
+  late String memberName;
+  late String content;
+  late int likeCount;
+  late String profileImg;
+  late String createdAt;
+
+  CommentModel({
+    required this.commentId,
+    required this.memberId,
+    required this.memberName,
+    required this.content,
+    required this.likeCount,
+    required this.profileImg,
+    required this.createdAt,
+  });
+  factory CommentModel.fromJson(Map<String, dynamic> json) {
+    return CommentModel(
+      commentId: json['commentId'],
+      memberId: json['memberId'],
+      memberName: json['memberName'],
+      content: json['content'],
+      likeCount: json['likeCount'],
+      profileImg: json['profileImg'],
+      createdAt: json['createdAt'],
+    );
+  }
+}
+
+class ImageItem {
+  final String path; // 이미지의 URL 또는 파일 경로
+  final bool isNetwork; // 네트워크 이미지인지 여부
+
+  ImageItem({required this.path, this.isNetwork = false});
 }

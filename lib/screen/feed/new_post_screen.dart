@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:daram/controller/feed.dart';
+import 'package:daram/controller/party_info.dart';
 import 'package:daram/models/feed.dart';
 import 'package:daram/provider/feed.dart';
+import 'package:daram/widgets/feed_object_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:daram/constants/Colors.dart';
 import 'package:daram/constants/Images.dart';
@@ -12,24 +14,41 @@ import 'package:get/get.dart';
 // import 'package:image_picker/image_picker.dart';
 
 class NewPostScreen extends StatefulWidget {
-  final PartyInfo partyInfo;
-  final Member member;
+  final PartyInfo? partyInfo;
+  final Member? member;
+  final FeedModel? feed;
+  final int type;
   const NewPostScreen(
-      {super.key, required this.partyInfo, required this.member});
+      {super.key, required this.type, this.partyInfo, this.member, this.feed});
 
   @override
   State<NewPostScreen> createState() => _NewPostScreenState();
 }
 
-final picker = ImagePicker();
-// XFile? image; // 카메라로 촬영한 이미지를 저장할 변수
-List<XFile?> multiImage = []; // 갤러리에서 여러장의 사진을 선택해서 저장할 변수
-List<XFile?> images = []; // 가져온 사진들을 보여주기 위한 변수
-
 class _NewPostScreenState extends State<NewPostScreen> {
   // final PostController postController = Get.put(PostController());
   final PostController postController = Get.put(PostController());
   FeedController feedController = Get.find<FeedController>();
+  final PartyInfoController partyInfoController =
+      Get.find<PartyInfoController>();
+
+  final picker = ImagePicker();
+// XFile? image; // 카메라로 촬영한 이미지를 저장할 변수
+  List<XFile?> multiImage = []; // 갤러리에서 여러장의 사진을 선택해서 저장할 변수
+  // List<XFile?> images = []; // 가져온 사진들을 보여주기 위한 변수
+
+  List<ImageItem> images = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.feed != null) {
+      postController.getController(id).text = widget.feed!.content;
+      images = images = widget.feed!.images
+          .map((image) => ImageItem(path: image.imageUrl, isNetwork: true))
+          .toList();
+    }
+  }
 
   final String id = 'textField';
   @override
@@ -85,16 +104,28 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     return;
                   }
                   try {
-                    await FeedApiService.uploadPost(
-                      memberEmail: widget.member.email,
-                      partyId: widget.partyInfo.partyId,
-                      content: postController.getController(id).text,
-                      images: images
-                          .whereType<XFile>()
-                          .toList(), // null이 아닌 이미지만 전송
-                    );
-                    print('Post uploaded successfully.');
-                    feedController.updateFeeds(widget.partyInfo.partyId);
+                    if (widget.type == 0) {
+                      print('${partyInfoController.partyId.value}');
+                      await FeedApiService.uploadPost(
+                        memberEmail: widget.member!.email,
+                        partyId: partyInfoController.partyId.value,
+                        content: postController.getController(id).text,
+                        images: images
+                            .whereType<XFile>()
+                            .toList(), // null이 아닌 이미지만 전송
+                      );
+                      print('Post uploaded successfully.');
+                    } else {
+                      await FeedApiService.editFeed(
+                        feedId: widget.feed!.feedId,
+                        content: postController.getController(id).text,
+                        images: images
+                            .whereType<XFile>()
+                            .toList(), // null이 아닌 이미지만 전송
+                      );
+                      print('Feed Edit successfully.');
+                    }
+                    feedController.updateFeeds(widget.partyInfo!.partyId);
                     postController.getController(id).clear();
                     images.clear();
                     Navigator.pop(context);
@@ -136,7 +167,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         onTap: () async {
                           multiImage = await picker.pickMultiImage();
                           setState(() {
-                            images.addAll(multiImage);
+                            images.addAll(multiImage
+                                .map((xFile) => ImageItem(
+                                    path: xFile!.path, isNetwork: false))
+                                .toList());
                           });
                         },
                         child: Container(
@@ -153,7 +187,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                           ),
                         ),
                       ),
-                      for (var image in images)
+                      for (var imageItem in images)
                         Stack(
                           clipBehavior: Clip.none,
                           alignment: Alignment.topRight,
@@ -165,10 +199,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: FileImage(
-                                    File(image!.path),
-                                  ),
+                                  image: imageItem.isNetwork
+                                      ? NetworkImage(imageItem.path)
+                                      : FileImage(File(imageItem.path))
+                                          as ImageProvider,
                                 ),
                               ),
                             ),
@@ -192,7 +226,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                   onPressed: () {
                                     setState(
                                       () {
-                                        images.remove(image);
+                                        images.remove(imageItem);
                                       },
                                     );
                                   },

@@ -24,4 +24,6 @@ class COLORS {
   static const Color alarmListShadow = Color(0x1E000000);
   static const Color alarmListBorder = Color(0xFFF9F8F8);
   static const Color imageDelete = Color(0xff5c5e61);
+  static const Color sliderBox = Color(0xffF16464);
+  static const Color defaultOrange2 = Color(0xFFE4A286);
 }
