@@ -1,6 +1,8 @@
 import 'package:daram/constants/Colors.dart';
 import 'package:daram/constants/Images.dart';
 import 'package:daram/controller/feed.dart';
+import 'package:daram/controller/party_info.dart';
+import 'package:daram/provider/feed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,7 +24,8 @@ class _ParticipationDialogState extends State<ParticipationDialog> {
   }
 
   bool checkPassword(password) {
-    return ('abcd' == password);
+    PartyInfoController partyInfoController = Get.find<PartyInfoController>();
+    return (partyInfoController.password.value == password);
   }
 
   @override
@@ -33,6 +36,7 @@ class _ParticipationDialogState extends State<ParticipationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    PartyInfoController partyInfoController = Get.find<PartyInfoController>();
     return Theme(
       data: ThemeData(
         textSelectionTheme: TextSelectionThemeData(
@@ -100,7 +104,8 @@ class _ParticipationDialogState extends State<ParticipationDialog> {
             onPressed: isValid()
                 ? () {
                     if (checkPassword(passwordController.text)) {
-                      Get.find<FeedController>().toggleParticipate();
+                      FeedApiService.joinParty(
+                          partyInfoController.partyId.value);
                       Navigator.of(context).pop(); // CupertinoAlertDialog 닫기
                       showModalBottomSheet(
                         context: context,

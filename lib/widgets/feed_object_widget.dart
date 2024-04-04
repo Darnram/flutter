@@ -108,7 +108,7 @@ class _FeedState extends State<Feed> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        widget.nickname,
+                        widget.feed.memberName,
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontWeight: FontWeight.w600,

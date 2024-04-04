@@ -305,4 +305,16 @@ class FeedApiService {
     }
     throw Error();
   }
+
+  static Future<void> joinParty(int id) async {
+    final url =
+        Uri.parse("${dotenv.env['DARNRAM_URL']}/party/join?partyId=$id");
+    final response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      print('join Party response = $data');
+      return data;
+    }
+    throw Error();
+  }
 }

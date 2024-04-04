@@ -44,8 +44,8 @@ class Daram extends StatelessWidget {
           GlobalCupertinoLocalizations.delegate
         ],
         supportedLocales: const [
-          Locale('ko',''),
-          Locale('en',''),
+          Locale('ko', ''),
+          Locale('en', ''),
         ],
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
@@ -70,9 +70,7 @@ class Daram extends StatelessWidget {
                 );
               }
               if (snapshot.connectionState == ConnectionState.done) {
-                return snapshot.data!
-                    ? const HomeScreen()
-                    : const LoginScreen();
+                return snapshot.data! ? HomeScreen() : const LoginScreen();
               }
               return const CircularProgressIndicator();
             }),

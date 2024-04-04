@@ -55,6 +55,7 @@ dependencies:
   carousel_slider: ^4.2.1
   calendar_date_picker2: ^0.5.5
   dropdown_button2: ^2.3.9
+  flutter_inappwebview: ^5.7.2+3
 dev_dependencies:
   flutter_test:
     sdk: flutter
