@@ -145,6 +145,20 @@ class Member {
         ban = json['ban'];
 }
 
+class PartyMember {
+  late int memberId;
+  late String nickname;
+
+  PartyMember({
+    required this.memberId,
+    required this.nickname,
+  });
+
+  factory PartyMember.fromJson(Map<String, dynamic> json) {
+    return PartyMember(memberId: json['memberId'], nickname: json['nickname']);
+  }
+}
+
 class FeedLike {
   late int feedId;
   late int likeCount;
@@ -187,4 +201,11 @@ class CommentModel {
       createdAt: json['createdAt'],
     );
   }
+}
+
+class ImageItem {
+  final String path; // 이미지의 URL 또는 파일 경로
+  final bool isNetwork; // 네트워크 이미지인지 여부
+
+  ImageItem({required this.path, this.isNetwork = false});
 }

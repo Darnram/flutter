@@ -1,4 +1,5 @@
 import 'package:daram/controller/new_party.dart';
+import 'package:daram/controller/party_info.dart';
 import 'package:daram/controller/user.dart';
 import 'package:daram/provider/login.dart';
 import 'package:daram/screen/home/home.dart';
@@ -33,6 +34,7 @@ class Daram extends StatelessWidget {
     Get.put(UserController());
     Get.put(PartyController());
     Get.put(NewPartyController());
+
     return ScreenUtilInit(
       designSize: const Size(390, 844),
       child: MaterialApp(

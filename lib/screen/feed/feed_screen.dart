@@ -1,5 +1,7 @@
 import 'package:daram/constants/Images.dart';
+import 'package:daram/controller/edit_party.dart';
 import 'package:daram/controller/feed.dart';
+import 'package:daram/controller/party_info.dart';
 import 'package:daram/controller/user.dart';
 import 'package:daram/models/party.dart';
 
@@ -27,21 +29,26 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   final ScrollController _scrollController = ScrollController();
   final UserController userController = Get.find<UserController>();
+
+  final EditPartyController editPartyController =
+      Get.put(EditPartyController());
   bool _isScrolled = false;
 
   //자신의 feed
   bool isMine = true;
   late Future<List<FeedModel>> feeds;
-  late Future<PartyInfo> partyInfo;
+  // late Future<PartyInfo> partyInfo;
   // late Future<Member> member;
 
   @override
   void initState() {
     super.initState();
+    Get.put(PartyInfoController());
+
     userController.showUser();
     _scrollController.addListener(_scrollListener);
-    partyInfo = FeedApiService.getPartyInfo(widget.party.partyId);
     feeds = FeedApiService.getFeedAll(widget.party.partyId, 0);
+    _checkIfUserIsPartyMember();
   }
 
   @override
@@ -63,21 +70,48 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
+  void _loadPartyInfo() async {
+    await FeedApiService.getPartyInfo(widget.party.partyId); // 가정
+    // if (partyInfo != null) {
+    //   Get.find<PartyInfoController>().fetchPartyInfo(partyInfo: partyInfo);
+    // }
+  }
+
+  void _checkIfUserIsPartyMember() async {
+    try {
+      final List<PartyMember> members =
+          await FeedApiService.partyMember(widget.party.partyId);
+      final bool isParticipate =
+          members.any((member) => member.memberId == userController.memberId);
+      final PartyInfoController partyInfoController =
+          Get.find<PartyInfoController>();
+
+      // 현재 사용자가 파티의 멤버인 경우 isParticipate를 true로 설정합니다.
+      partyInfoController.isParticipate.value = isParticipate;
+    } catch (error) {
+      print('Error checking party membership: $error');
+      // 여기서는 에러 핸들링을 간단하게 출력만 하고 있습니다. 실제 앱에서는 사용자에게 적절한 피드백을 제공해야 합니다.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // FeedController feedController =
     //     Get.put(FeedController(partyId: widget.party.partyId));
+    _loadPartyInfo();
     Get.put(FeedController()); //controller 등록
     FeedController feedController = Get.find<FeedController>();
     feedController.updateFeeds(widget.party.partyId);
-    partyInfo.then((info) {
-      feedController.setPartyInfo(info);
-    });
+    final PartyInfoController partyInfoController =
+        Get.find<PartyInfoController>();
+    // partyInfo.then((info) {
+    //   feedController.setPartyInfo(info);
+    // });
     return Scaffold(
       floatingActionButton: Obx(
         () {
-          return feedController.isParticipate.value |
-                  feedController.isMemberLeader
+          return partyInfoController.isParticipate.value |
+                  partyInfoController.isAdminister.value
               ? Padding(
                   padding: const EdgeInsets.only(right: 4),
                   child: FloatingActionButton(
@@ -91,9 +125,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => NewPostScreen(
-                              type: 0,
-                              partyInfo: feedController.partyInfo.value!,
-                              member: feedController.member.value!),
+                              type: 0, member: feedController.member.value!),
                         ),
                       );
                     },
@@ -149,20 +181,10 @@ class _FeedScreenState extends State<FeedScreen> {
           SliverToBoxAdapter(
             child: Container(
               color: Colors.white,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Obx(() {
-                  // Obx를 사용하여 partyInfo의 변화를 감지합니다.
-                  var partyInfo = Get.find<FeedController>().partyInfo.value;
-                  if (partyInfo == null) {
-                    return const CircularProgressIndicator();
-                  } else {
-                    return FeedIntroduce(
-                      partyInfo: partyInfo,
-                    );
-                  }
-                }),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                // child:
+                child: FeedIntroduce(),
               ),
             ),
           ),

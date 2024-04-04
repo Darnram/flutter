@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class FeedController extends GetxController {
   var isParticipate = true.obs;
   var isLeader = true.obs;
-  var isMine = true.obs;
+  Rx<bool> isMine = false.obs;
   var hasInput = false.obs;
 
   bool get isMemberLeader =>

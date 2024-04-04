@@ -2,6 +2,8 @@ import 'package:daram/constants/Colors.dart';
 import 'package:daram/constants/Images.dart';
 import 'package:daram/controller/feed.dart';
 import 'package:daram/controller/new_party.dart';
+import 'package:daram/controller/party_info.dart';
+import 'package:daram/controller/user.dart';
 import 'package:daram/models/feed.dart';
 import 'package:daram/provider/feed.dart';
 import 'package:daram/screen/feed/new_post_screen.dart';
@@ -21,6 +23,19 @@ class FeedPopupMenu extends StatefulWidget {
 
 class _FeedPopupMenuState extends State<FeedPopupMenu> {
   FeedController feedController = Get.find<FeedController>();
+  PartyInfoController partyInfoController = Get.find<PartyInfoController>();
+  UserController userController = Get.find<UserController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfMine();
+  }
+
+  void _checkIfMine() {
+    bool isMine = userController.memberId.value == widget.feed.feedId;
+    feedController.isMine.value = isMine;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +44,7 @@ class _FeedPopupMenuState extends State<FeedPopupMenu> {
       offset: const Offset(-1.5, 4),
       padding: const EdgeInsets.only(left: 20),
       constraints:
-          feedController.isParticipate.value && feedController.isMine.value
+          partyInfoController.isParticipate.value && feedController.isMine.value
               ? BoxConstraints(maxWidth: 88.w, maxHeight: 80.h)
               : BoxConstraints(maxWidth: 88.w, maxHeight: 48.h),
       color: Colors.white,
@@ -44,7 +59,8 @@ class _FeedPopupMenuState extends State<FeedPopupMenu> {
         height: 18.h,
       ),
       itemBuilder: (context) {
-        return feedController.isParticipate.value && feedController.isMine.value
+        return partyInfoController.isParticipate.value &&
+                feedController.isMine.value
             ? [
                 _buildMenuItem(
                   value: 1,

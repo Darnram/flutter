@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:daram/controller/comment.dart';
+import 'package:daram/controller/party_info.dart';
+import 'package:daram/controller/user.dart';
 import 'package:daram/models/feed.dart';
 import 'package:daram/widgets/comment_object_widget.dart';
 import 'package:flutter/material.dart';
@@ -9,25 +11,30 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
+final UserController userController = Get.find<UserController>();
+
 final Map<String, String> headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  'Authorization': 'Bearer ${dotenv.env['TOKEN']}',
-  'Member-Id': 'DHI ${dotenv.env['MEMBER_ID']}'
+  'Authorization': 'Bearer ${userController.accessToken.value}',
+  'Member-Id': 'DHI ${userController.memberId.value}'
 };
 
 class FeedApiService {
-  static Future<PartyInfo> getPartyInfo(int id) async {
+  static Future<dynamic> getPartyInfo(int id) async {
+    final PartyInfoController partyInfoController =
+        Get.find<PartyInfoController>();
+
     final url = Uri.parse(
         "${dotenv.env['DARNRAM_URL']}/no-auth/party/info?partyId=$id");
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final party = jsonDecode(response.body);
       print('PartyInfo response= $party');
-
-      return PartyInfo.fromJson(party);
+      partyInfoController.fetchPartyInfo(partyInfo: PartyInfo.fromJson(party));
+    } else {
+      throw Error();
     }
-    throw Error();
   }
 
   static Future<List<FeedModel>> getFeedAll(int id, int page) async {
@@ -65,6 +72,26 @@ class FeedApiService {
       return Member.fromJson(member);
     }
     throw Error();
+  }
+
+  static Future<List<PartyMember>> partyMember(int id) async {
+    List<PartyMember> memberInstances = [];
+    final url = Uri.parse(
+        "${dotenv.env['DARNRAM_URL']}/no-auth/party/member/all?partyId=$id");
+    final response = await http.get(url, headers: headers);
+    print('All member response = $response');
+    if (response.statusCode == 200) {
+      final List<dynamic> memberJson =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      for (var member in memberJson) {
+        memberInstances.add(PartyMember.fromJson(member));
+      }
+
+      return memberInstances;
+    } else {
+      print('Failed to call API: status code = ${response.statusCode}');
+      throw Error();
+    }
   }
 
   static Future<void> likeFeed(int id) async {
@@ -110,6 +137,41 @@ class FeedApiService {
         'images',
         image.path,
       ));
+    }
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200) {
+      print('Response body: ${response.body}');
+      throw Exception('Failed to upload post.');
+    }
+  }
+
+  static Future<void> editFeed({
+    required int feedId,
+    String? content,
+    List<XFile>? images,
+  }) async {
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('${dotenv.env['DARNRAM_URL']}/feed/edit'),
+    )
+      ..headers.addAll(headers)
+      ..fields['feedId'] = feedId.toString();
+    // content가 null이 아니면 필드에 추가
+    if (content != null && content.isNotEmpty) {
+      request.fields['content'] = content;
+    }
+
+    // images가 null이 아니고, 비어 있지 않으면 각 이미지를 파일로 추가
+    if (images != null && images.isNotEmpty) {
+      for (var image in images) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'images',
+          image.path,
+        ));
+      }
     }
 
     var streamedResponse = await request.send();
