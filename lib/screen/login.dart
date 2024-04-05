@@ -77,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                   );
                 },
                 child: const Text(
-                  '개인정보처리방침',
+                  '서비스이용약관',
                   style: TextStyle(decoration: TextDecoration.underline),
                 ),
               ),
