@@ -1,4 +1,4 @@
-package com.darnram.darnram_flutter
+package test.danram
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity
